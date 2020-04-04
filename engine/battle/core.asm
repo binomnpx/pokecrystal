@@ -159,7 +159,7 @@ WildFled_EnemyFled_LinkBattleCanceled:
 BattleTurn:
 .loop
 	call Stubbed_Function3c1bf
-	call CheckContestBattleOver
+	call CheckContestBattleOver	; bug contest
 	jp c, .quit
 
 	xor a
@@ -183,10 +183,10 @@ BattleTurn:
 	jp c, .quit
 .not_disconnected
 
-	call CheckPlayerLockedIn
+	call CheckPlayerLockedIn ;flinch, thrash, rollout, etc.
 	jr c, .skip_iteration
 .loop1
-	call BattleMenu
+	call BattleMenu ; fight, pkmn, item, run
 	jr c, .quit
 	ld a, [wBattleEnded]
 	and a
@@ -195,13 +195,13 @@ BattleTurn:
 	and a
 	jr nz, .quit
 .skip_iteration
-	call ParsePlayerAction
+	call ParsePlayerAction ; move menu, encore, fury cutter, struggle, etc.
 	jr nz, .loop1
 
-	call EnemyTriesToFlee
+	call EnemyTriesToFlee ; ends battle if opponent forfeits (link battle only)
 	jr c, .quit
 
-	call DetermineMoveOrder
+	call DetermineMoveOrder ; gets move order, gets switched or not, gets spikes damage
 	jr c, .false
 	call Battle_EnemyFirst
 	jr .proceed
@@ -863,27 +863,27 @@ GetMoveEffect:
 
 Battle_EnemyFirst:
 	call LoadTileMapToTempTileMap
-	call TryEnemyFlee
-	jp c, WildFled_EnemyFled_LinkBattleCanceled
-	call SetEnemyTurn
+	call TryEnemyFlee ; get flee or stay
+	jp c, WildFled_EnemyFled_LinkBattleCanceled ; flee or stay
+	call SetEnemyTurn ; sets hBattleTurn to 1
 	ld a, $1
 	ld [wEnemyGoesFirst], a
 	callfar AI_SwitchOrTryItem
 	jr c, .switch_item
-	call EnemyTurn_EndOpponentProtectEndureDestinyBond
+	call EnemyTurn_EndOpponentProtectEndureDestinyBond ; substat1 - endure, protect; substat5 - destiny bond
 	call CheckMobileBattleError
 	ret c
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
 	call HasPlayerFainted
-	jp z, HandlePlayerMonFaint
+	jp z, HandlePlayerMonFaint ; also checks if player lost battle
 	call HasEnemyFainted
 	jp z, HandleEnemyMonFaint
 
 .switch_item
-	call SetEnemyTurn
-	call ResidualDamage
+	call SetEnemyTurn ; set turn to enemy for residual dmg
+	call ResidualDamage ; apply residual dmg to enemy
 	jp z, HandleEnemyMonFaint
 	call RefreshBattleHuds
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond
@@ -892,9 +892,9 @@ Battle_EnemyFirst:
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
-	call HasEnemyFainted
-	jp z, HandleEnemyMonFaint
-	call HasPlayerFainted
+	call HasEnemyFainted ; checks if hp is zero or not
+	jp z, HandleEnemyMonFaint 
+	call HasPlayerFainted ; checks if hp is zero or not
 	jp z, HandlePlayerMonFaint
 	call SetPlayerTurn
 	call ResidualDamage
@@ -1004,7 +1004,7 @@ ResidualDamage:
 
 	call HasUserFainted
 	ret z
-
+; below gets the correct status (PSN or BRN)
 	ld a, BATTLE_VARS_STATUS
 	call GetBattleVar
 	and 1 << PSN | 1 << BRN
@@ -1019,30 +1019,30 @@ ResidualDamage:
 .got_anim
 
 	push de
-	call StdBattleTextbox
+	call StdBattleTextbox ; does animation and prints the "hurt by" text
 	pop de
 
 	xor a
 	ld [wNumHits], a
-	call Call_PlayBattleAnim_OnlyIfVisible
-	call GetEighthMaxHP
+	call Call_PlayBattleAnim_OnlyIfVisible ; do not animate for fly, dig, etc.
+	call GetEighthMaxHP ; dmg stored in bc
 	ld de, wPlayerToxicCount
 	ldh a, [hBattleTurn]
 	and a
-	jr z, .check_toxic
+	jr z, .check_toxic ; get enemy's or player's toxic count
 	ld de, wEnemyToxicCount
 .check_toxic
 
 	ld a, BATTLE_VARS_SUBSTATUS5
 	call GetBattleVar
 	bit SUBSTATUS_TOXIC, a
-	jr z, .did_toxic
-	call GetSixteenthMaxHP
+	jr z, .did_toxic ; skip if no toxic status?
+	call GetSixteenthMaxHP ; dmg stored in bc
 	ld a, [de]
 	inc a
 	ld [de], a
 	ld hl, 0
-.add
+.add ; loop for total toxic dmg
 	add hl, bc
 	dec a
 	jr nz, .add
@@ -1051,7 +1051,7 @@ ResidualDamage:
 .did_toxic
 
 	call SubtractHPFromUser
-.did_psn_brn
+.did_psn_brn ; skips to here if neither poisined, toxic'd, or burned
 
 	call HasUserFainted
 	jp z, .fainted
@@ -1061,26 +1061,26 @@ ResidualDamage:
 	bit SUBSTATUS_LEECH_SEED, [hl]
 	jr z, .not_seeded
 
-	call SwitchTurnCore
+	call SwitchTurnCore ; switch to enemy if player ; switch to player if enemy
 	xor a
 	ld [wNumHits], a
 	ld de, ANIM_SAP
-	ld a, BATTLE_VARS_SUBSTATUS3_OPP
+	ld a, BATTLE_VARS_SUBSTATUS3_OPP ; opposite side of the field (can be player OR enemy)
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
-	call z, Call_PlayBattleAnim_OnlyIfVisible
+	call z, Call_PlayBattleAnim_OnlyIfVisible ; don't animate if the leech seeded is flying/digging
 	call SwitchTurnCore
 
 	call GetEighthMaxHP
 	call SubtractHPFromUser
 	ld a, $1
 	ldh [hBGMapMode], a
-	call RestoreHP
+	call RestoreHP ; oddly enough, this function is already "reversed" (no need for SwitchBattleCore)
 	ld hl, LeechSeedSapsText
 	call StdBattleTextbox
 .not_seeded
 
-	call HasUserFainted
+	call HasUserFainted ; skip nightmare/curse if user fainted
 	jr z, .fainted
 
 	ld a, BATTLE_VARS_SUBSTATUS1
