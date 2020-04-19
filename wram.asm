@@ -939,7 +939,8 @@ wRandMon3:: db
 wRandMon4:: db
 wRandMon5:: db
 wRandMon6:: db
-	ds 15
+wCoins:: dw
+	ds 13
 
 wUnusedMapBufferEnd::
 
@@ -2576,7 +2577,8 @@ wMomSavingMoney:: ; d854
 ; bit 7: active
 	db
 
-wCoins:: dw ; d855
+; wCoins:: dw ; d855
+wCoinz:: dw ; unused
 
 wBadges::
 wJohtoBadges:: flag_array NUM_JOHTO_BADGES ; d857

@@ -238,6 +238,7 @@ ScriptCommandTable:
 	dw Script_getBTcoins				 ; ac
 	dw Script_updateBTcoinsStringBuffer	 ; ad
 	dw Script_realquicksave				 ; ae
+	dw Script_saveBTdata				 ; af
 
 StartScript:
 	ld hl, wScriptFlags
@@ -2939,6 +2940,12 @@ Script_realquicksave:
 ; script command 0xae
 
 	farcall RealQuickSave
+	ret
+
+Script_saveBTdata:
+; script command 0xaf
+
+	farcall SaveBTData
 	ret
 
 ; ; unused

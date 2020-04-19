@@ -530,12 +530,12 @@ SavePokemonData:
 	call CloseSRAM
 	ret
 
-SaveBTData:
+SaveBTData::
 	ld a, BANK(sBTData)
 	call GetSRAMBank
 	ld hl, wDayLastSet
 	ld de, sBTData
-	ld bc, 9
+	ld bc, 11
 	call CopyBytes
 	call CloseSRAM
 	ret
@@ -791,7 +791,7 @@ LoadBTData:
 	call GetSRAMBank
 	ld hl, sBTData
 	ld de, wDayLastSet
-	ld bc, 9
+	ld bc, 11
 	call CopyBytes
 	call CloseSRAM
 	ret

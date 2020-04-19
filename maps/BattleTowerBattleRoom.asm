@@ -46,6 +46,7 @@ Script_BattleRoomLoop:
 	updateBTcoinsStringBuffer
 	givecoins USE_SCRIPT_VAR
 	writetext Text_BTCoins
+	saveBTdata
 	waitbutton
 	refreshscreen
 	special DisplayCoinCaseBalance

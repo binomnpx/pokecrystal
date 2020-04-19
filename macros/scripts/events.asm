@@ -1087,3 +1087,8 @@ ENDM
 realquicksave: MACRO
 	db realquicksave_command
 ENDM
+
+	enum saveBTdata_command ; af
+saveBTdata: MACRO
+	db saveBTdata_command
+ENDM
