@@ -116,6 +116,7 @@ Script_AskToResume:
 	yesorno
 	iffalse Script_AskToStartNewChallenge
 	writetext Text_WeveBeenWaitingForYou
+	realquicksave
 	waitbutton
 
 Script_ResumeBattleTowerChallenge:

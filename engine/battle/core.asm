@@ -6584,10 +6584,10 @@ ApplyPrzEffectOnSpeed:
 	ld a, [hld]
 	ld b, a
 	ld a, [hl]
-	srl a
-	rr b
-	srl a
-	rr b
+	srl a ; used to carry to b if speed > 255
+	rr b ; effectively divides by two
+	srl a ; used to carry to b if speed > 255
+	rr b ; effectively divides by two
 	ld [hli], a
 	or b
 	jr nz, .player_ok
@@ -6605,10 +6605,10 @@ ApplyPrzEffectOnSpeed:
 	ld a, [hld]
 	ld b, a
 	ld a, [hl]
-	srl a
-	rr b
-	srl a
-	rr b
+	srl a ; used to carry to b if speed > 255
+	rr b ; effectively divides by two
+	srl a ; used to carry to b if speed > 255 + 256
+	rr b ; effectively divides by two
 	ld [hli], a
 	or b
 	jr nz, .enemy_ok
@@ -7630,7 +7630,7 @@ SendOutMonText:
 	ld hl, JumpText_GoMon
 	jr z, .skip_to_textbox
 
-	; compute enemy helth remaining as a percentage
+	; compute enemy health remaining as a percentage
 	xor a
 	ldh [hMultiplicand + 0], a
 	ld hl, wEnemyMonHP

@@ -1255,7 +1255,7 @@ BattleTowerRoomMenu_UpdatePickLevelMenu:
 	ld [hl], a
 	jr .asm_1189e5
 
-.a_button
+.a_button ; important
 	call PlayClickSFX
 	ld a, [wcd4f]
 	ld hl, wcd4a
