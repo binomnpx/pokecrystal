@@ -429,7 +429,7 @@ BattleTower1FClerkScript:
 	; readmem wRandMon2
 	; special GameCornerPrizeMonCheckDex
 	readmem wRandMon2
-	givepoke USE_SCRIPT_VAR, 40 
+	givepoke DRAGONITE, 40, LEFTOVERS
 	takecoins BATTLETOWER_COMMON_COINS
 	setflag ENGINE_SHOP_BOUGHT2
 	realquicksave

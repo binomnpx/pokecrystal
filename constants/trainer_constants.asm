@@ -213,6 +213,7 @@ KRIS EQU __enum__
 	const STEVE
 	const ALLEN
 	const DARIN
+	const DEBUG
 
 	trainerclass COOLTRAINERF ; 1c
 	const GWEN

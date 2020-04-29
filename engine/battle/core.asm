@@ -870,7 +870,7 @@ Battle_EnemyFirst:
 	ld [wEnemyGoesFirst], a
 	callfar AI_SwitchOrTryItem
 	jr c, .switch_item
-	call EnemyTurn_EndOpponentProtectEndureDestinyBond ; substat1 - endure, protect; substat5 - destiny bond
+	call EnemyTurn_EndOpponentProtectEndureDestinyBond ; DoEnemyTurn; substat1 = endure, protect; substat5 = destiny bond
 	call CheckMobileBattleError
 	ret c
 	ld a, [wForcedSwitch]
@@ -886,7 +886,7 @@ Battle_EnemyFirst:
 	call ResidualDamage ; apply residual dmg to enemy
 	jp z, HandleEnemyMonFaint
 	call RefreshBattleHuds
-	call PlayerTurn_EndOpponentProtectEndureDestinyBond
+	call PlayerTurn_EndOpponentProtectEndureDestinyBond ; DoPlayerTurn
 	call CheckMobileBattleError
 	ret c
 	ld a, [wForcedSwitch]

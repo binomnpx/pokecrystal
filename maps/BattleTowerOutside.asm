@@ -18,6 +18,17 @@ BattleTowerOutside_MapScripts:
 	clearevent EVENT_BATTLE_TOWER_OUTSIDE_SAILOR
 	return
 
+TrainerDebug:
+	trainer COOLTRAINERM, DEBUG, EVENT_BEAT_COOLTRAINERM_DEBUG, TrainerDebugSeenText, TrainerDebugBeatenText, 0, .Script
+
+.Script:
+	endifjustbattled
+	opentext
+	writetext TrainerDebugAfterBattleText
+	waitbutton
+	closetext
+	end
+
 BattleTowerOutsideYoungsterScript:
 	jumptextfaceplayer BattleTowerOutsideYoungsterText
 
@@ -29,6 +40,18 @@ BattleTowerOutsideSailorScript:
 
 BattleTowerOutsideSign:
 	jumptext BattleTowerOutsideSignText
+
+TrainerDebugSeenText:
+	text "Let's debug!"
+	done
+	
+TrainerDebugBeatenText:
+	text "Debug over!"
+	done
+
+TrainerDebugAfterBattleText:
+	text "Debug over!"
+	done
 
 BattleTowerOutsideYoungsterText_NotYetOpen:
 ; unreferenced
@@ -145,8 +168,9 @@ BattleTowerOutside_MapEvents:
 	db 1 ; bg events
 	bg_event 10, 10, BGEVENT_READ, BattleTowerOutsideSign
 
-	db 4 ; object events
+	db 5 ; object events
 	object_event  6, 12, SPRITE_STANDING_YOUNGSTER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, BattleTowerOutsideYoungsterScript, -1
 	object_event 13, 11, SPRITE_BUENA, SPRITEMOVEDATA_WANDER, 1, 1, -1, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, BattleTowerOutsideBuenaScript, -1
 	object_event 12, 18, SPRITE_SAILOR, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 1, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, BattleTowerOutsideSailorScript, EVENT_BATTLE_TOWER_OUTSIDE_SAILOR
 	object_event 12, 24, SPRITE_LASS, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, ObjectEvent, -1
+	object_event 4,  11, SPRITE_COOLTRAINER_M, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, PAL_NPC_RED, OBJECTTYPE_TRAINER, 0, TrainerDebug, -1
