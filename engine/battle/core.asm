@@ -252,42 +252,101 @@ HandleBetweenTurnEffects:
 	jr z, .CheckEnemyFirst
 	call CheckFaint_PlayerThenEnemy
 	ret c
-	call HandleFutureSight
-	call CheckFaint_PlayerThenEnemy
-	ret c
 	call HandleWeather
 	call CheckFaint_PlayerThenEnemy
 	ret c
+	call HandleFutureSight
+	call CheckFaint_PlayerThenEnemy
+	ret c
+	
+	; + Handle Wish
+	call HandleLeftovers
+	; + Handle Hydration/Shed Skin + Leftovers/Black Sludge
+	
+	call HandleLeechSeed
+	call CheckFaint_PlayerThenEnemy
+	ret c
+	
+	call HandlePSNBRN
+	call CheckFaint_PlayerThenEnemy
+	ret c
+	
+	call HandleNightmare
+	call CheckFaint_PlayerThenEnemy
+	ret c
+	
+	call HandleCurse
+	call CheckFaint_PlayerThenEnemy
+	ret c
+	
 	call HandleWrap
 	call CheckFaint_PlayerThenEnemy
 	ret c
+	
+	; Handle Taunt/Encore/Disable
+	; Handle Yawn
+	
 	call HandlePerishSong
 	call CheckFaint_PlayerThenEnemy
 	ret c
+	
+	; Handle Screens
+	; Handle Safeguard
+	; Handle Speed Boost/Moody/Bad Dreams + Flame Orb/Toxic Orb/Sticky Barb + Harvest
+	
 	jr .NoMoreFaintingConditions
 
 .CheckEnemyFirst:
 	call CheckFaint_EnemyThenPlayer
 	ret c
-	call HandleFutureSight
-	call CheckFaint_EnemyThenPlayer
-	ret c
 	call HandleWeather
 	call CheckFaint_EnemyThenPlayer
 	ret c
-	call HandleWrap
+	call HandleFutureSight
 	call CheckFaint_EnemyThenPlayer
 	ret c
-	call HandlePerishSong
+	
+	; + Handle Wish
+	call HandleLeftovers
+	; + Handle Hydration/Shed Skin + Leftovers/Black Sludge
+
+	call HandleLeechSeed
 	call CheckFaint_EnemyThenPlayer
 	ret c
 
+	call HandlePSNBRN
+	call CheckFaint_EnemyThenPlayer
+	ret c
+	
+	call HandleNightmare
+	call CheckFaint_EnemyThenPlayer
+	ret c
+	
+	call HandleCurse
+	call CheckFaint_EnemyThenPlayer
+	ret c
+
+	call HandleWrap
+	call CheckFaint_EnemyThenPlayer
+	ret c
+	
+	; Handle Taunt/Encore/Disable
+	; Handle Yawn
+
+	call HandlePerishSong
+	call CheckFaint_EnemyThenPlayer
+	ret c
+	
+	; Handle Screens
+	; Handle Safeguard
+	; Handle Speed Boost/Moody/Bad Dreams + Flame Orb/Toxic Orb/Sticky Barb + Harvest
+
 .NoMoreFaintingConditions:
-	call HandleLeftovers
+	; call HandleLeftovers
 	call HandleMysteryberry
 	call HandleDefrost
-	call HandleSafeguard
 	call HandleScreens
+	call HandleSafeguard
 	call HandleStatBoostingHeldItems
 	call HandleHealingItems
 	call UpdateBattleMonInParty
@@ -297,6 +356,10 @@ HandleBetweenTurnEffects:
 CheckFaint_PlayerThenEnemy:
 	call HasPlayerFainted
 	jr nz, .PlayerNotFainted
+	call RefreshBattleHuds
+	ld c, 20
+	call DelayFrames
+	xor a
 	call HandlePlayerMonFaint
 	ld a, [wBattleEnded]
 	and a
@@ -305,6 +368,10 @@ CheckFaint_PlayerThenEnemy:
 .PlayerNotFainted:
 	call HasEnemyFainted
 	jr nz, .BattleContinues
+	call RefreshBattleHuds
+	ld c, 20
+	call DelayFrames
+	xor a
 	call HandleEnemyMonFaint
 	ld a, [wBattleEnded]
 	and a
@@ -870,7 +937,7 @@ Battle_EnemyFirst:
 	ld [wEnemyGoesFirst], a
 	callfar AI_SwitchOrTryItem
 	jr c, .switch_item
-	call EnemyTurn_EndOpponentProtectEndureDestinyBond ; DoEnemyTurn; substat1 = endure, protect; substat5 = destiny bond
+	call EnemyTurn_EndOpponentProtectEndureDestinyBond ; enemy attacks
 	call CheckMobileBattleError
 	ret c
 	ld a, [wForcedSwitch]
@@ -883,8 +950,8 @@ Battle_EnemyFirst:
 
 .switch_item
 	call SetEnemyTurn ; set turn to enemy for residual dmg
-	call ResidualDamage ; apply residual dmg to enemy
-	jp z, HandleEnemyMonFaint
+	; call ResidualDamage ; apply residual dmg to enemy
+	; jp z, HandleEnemyMonFaint
 	call RefreshBattleHuds
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond ; DoPlayerTurn
 	call CheckMobileBattleError
@@ -897,8 +964,8 @@ Battle_EnemyFirst:
 	call HasPlayerFainted ; checks if hp is zero or not
 	jp z, HandlePlayerMonFaint
 	call SetPlayerTurn
-	call ResidualDamage
-	jp z, HandlePlayerMonFaint
+	; call ResidualDamage
+	; jp z, HandlePlayerMonFaint
 	call RefreshBattleHuds
 	xor a ; BATTLEPLAYERACTION_USEMOVE
 	ld [wBattlePlayerAction], a
@@ -923,10 +990,10 @@ Battle_PlayerFirst:
 	jp z, HandlePlayerMonFaint
 	push bc
 	call SetPlayerTurn
-	call ResidualDamage
-	pop bc
-	jp z, HandlePlayerMonFaint
-	push bc
+	; call ResidualDamage
+	; pop bc
+	; jp z, HandlePlayerMonFaint
+	; push bc
 	call RefreshBattleHuds
 	pop af
 	jr c, .switched_or_used_item
@@ -946,8 +1013,8 @@ Battle_PlayerFirst:
 
 .switched_or_used_item
 	call SetEnemyTurn
-	call ResidualDamage
-	jp z, HandleEnemyMonFaint
+	; call ResidualDamage
+	; jp z, HandleEnemyMonFaint
 	call RefreshBattleHuds
 	xor a ; BATTLEPLAYERACTION_USEMOVE
 	ld [wBattlePlayerAction], a
@@ -1778,6 +1845,138 @@ HandleWeather:
 	dw BattleText_TheRainStopped
 	dw BattleText_TheSunlightFaded
 	dw BattleText_TheSandstormSubsided
+
+
+
+HandlePSNBRN:
+	ldh a, [hSerialConnectionStatus]
+	cp USING_EXTERNAL_CLOCK
+	jr z, .enemy_first
+
+.player_first
+	call SetPlayerTurn
+	call .PSNBRNDamage
+	call SetEnemyTurn
+	jr .PSNBRNDamage
+
+.enemy_first
+	call SetEnemyTurn
+	call .PSNBRNDamage
+	call SetPlayerTurn
+
+.PSNBRNDamage:
+
+	ld a, BATTLE_VARS_STATUS
+	call GetBattleVar
+	and 1 << PSN | 1 << BRN
+	jr z, .did_psn_brn
+
+	ld hl, HurtByPoisonText
+	ld de, ANIM_PSN
+	and 1 << BRN
+	jr z, .got_anim
+	ld hl, HurtByBurnText
+	ld de, ANIM_BRN
+.got_anim
+
+	push de
+	call StdBattleTextbox ; does animation and prints the "hurt by" text
+	pop de
+
+	xor a
+	ld [wNumHits], a
+	call Call_PlayBattleAnim_OnlyIfVisible ; do not animate for fly, dig, etc.
+	call GetEighthMaxHP ; dmg stored in bc
+	ld de, wPlayerToxicCount
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .check_toxic ; get enemy's or player's toxic count
+	ld de, wEnemyToxicCount
+.check_toxic
+
+	ld a, BATTLE_VARS_SUBSTATUS5
+	call GetBattleVar
+	bit SUBSTATUS_TOXIC, a
+	jr z, .did_toxic ; skip if no toxic status?
+	call GetSixteenthMaxHP ; dmg stored in bc
+	ld a, [de]
+	inc a
+	ld [de], a
+	ld hl, 0
+.add ; loop for total toxic dmg
+	add hl, bc
+	dec a
+	jr nz, .add
+	ld b, h
+	ld c, l
+.did_toxic
+
+	call SubtractHPFromUser
+.did_psn_brn
+	ret
+
+
+HandleLeechSeed:
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVarAddr
+	bit SUBSTATUS_LEECH_SEED, [hl]
+	jr z, .not_seeded
+
+	call SwitchTurnCore ; switch to enemy if player ; switch to player if enemy
+	xor a
+	ld [wNumHits], a
+	ld de, ANIM_SAP
+	ld a, BATTLE_VARS_SUBSTATUS3_OPP ; opposite side of the field (can be player OR enemy)
+	call GetBattleVar
+	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	call z, Call_PlayBattleAnim_OnlyIfVisible ; don't animate if the leech seeded is flying/digging
+	call SwitchTurnCore
+
+	call GetEighthMaxHP
+	call SubtractHPFromUser
+	ld a, $1
+	ldh [hBGMapMode], a
+	call RestoreHP ; oddly enough, this function is already "reversed" (no need for SwitchBattleCore)
+	ld hl, LeechSeedSapsText
+	call StdBattleTextbox
+.not_seeded
+	ret
+
+
+HandleNightmare:
+	ld a, BATTLE_VARS_SUBSTATUS1
+	call GetBattleVarAddr
+	bit SUBSTATUS_NIGHTMARE, [hl]
+	jr z, .not_nightmare
+	xor a
+	ld [wNumHits], a
+	ld de, ANIM_IN_NIGHTMARE
+	call Call_PlayBattleAnim_OnlyIfVisible
+	call GetQuarterMaxHP
+	call SubtractHPFromUser
+	ld hl, HasANightmareText
+	call StdBattleTextbox
+.not_nightmare
+	ret
+
+HandleCurse:
+	ld a, BATTLE_VARS_SUBSTATUS1
+	call GetBattleVarAddr
+	bit SUBSTATUS_CURSE, [hl]
+	jr z, .not_cursed
+	xor a
+	ld [wNumHits], a
+	ld de, ANIM_IN_NIGHTMARE
+	call Call_PlayBattleAnim_OnlyIfVisible
+	call GetQuarterMaxHP
+	call SubtractHPFromUser
+	ld hl, HurtByCurseText
+	call StdBattleTextbox
+.not_cursed
+	ret
+
+
+
 
 SubtractHPFromTarget:
 	call SubtractHP
