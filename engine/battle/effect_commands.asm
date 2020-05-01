@@ -3805,6 +3805,8 @@ BattleCommand_Poison:
 	xor a
 	ld [de], a
 	call .apply_poison
+	call ToxicOpponent
+	
 
 	ld hl, BadlyPoisonedText
 	call StdBattleTextbox
@@ -3857,6 +3859,12 @@ PoisonOpponent:
 	ld a, BATTLE_VARS_STATUS_OPP
 	call GetBattleVarAddr
 	set PSN, [hl]
+	jp UpdateOpponentInParty
+
+ToxicOpponent:
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVarAddr
+	set TOX, [hl]
 	jp UpdateOpponentInParty
 
 BattleCommand_DrainTarget:

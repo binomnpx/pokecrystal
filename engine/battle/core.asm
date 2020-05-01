@@ -1893,11 +1893,15 @@ HandlePSNBRN:
 	jr z, .check_toxic ; get enemy's or player's toxic count
 	ld de, wEnemyToxicCount
 .check_toxic
-
-	ld a, BATTLE_VARS_SUBSTATUS5
+	ld a, BATTLE_VARS_STATUS
 	call GetBattleVar
-	bit SUBSTATUS_TOXIC, a
-	jr z, .did_toxic ; skip if no toxic status?
+	and 1 << TOX
+	jr z, .did_toxic
+	ld a, BATTLE_VARS_SUBSTATUS5
+	call GetBattleVarAddr
+	; bit SUBSTATUS_TOXIC, a
+	set SUBSTATUS_TOXIC, [hl]
+	; jr z, .did_toxic ; skip if no toxic status?
 	call GetSixteenthMaxHP ; dmg stored in bc
 	ld a, [de]
 	inc a
@@ -2520,6 +2524,9 @@ EnemyPartyMonEntrance:
 	call NewEnemyMonStatus
 	call ResetEnemyStatLevels
 	call BreakAttraction
+	xor a
+	ld [wEnemyToxicCount], a
+	
 	pop af
 	and a
 	jr nz, .set
@@ -2985,6 +2992,8 @@ PlayerPartyMonEntrance:
 	call EmptyBattleTextbox
 	call LoadTileMapToTempTileMap
 	call SetPlayerTurn
+	xor a
+	ld [wPlayerToxicCount], a
 	jp SpikesDamage
 
 CheckMobileBattleError:
@@ -5422,6 +5431,8 @@ PlayerSwitch:
 EnemyMonEntrance:
 	callfar AI_Switch
 	call SetEnemyTurn
+	xor a
+	ld [wEnemyToxicCount], a
 	jp SpikesDamage
 
 BattleMonEntrance:
@@ -5432,6 +5443,8 @@ BattleMonEntrance:
 
 	ld hl, wPlayerSubStatus4
 	res SUBSTATUS_RAGE, [hl]
+	xor a
+	ld [wPlayerToxicCount], a
 
 	call SetEnemyTurn
 	call PursuitSwitch
