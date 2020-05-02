@@ -1270,9 +1270,9 @@ GengarEvosAttacks:
 	db 8, SPITE
 	db 13, MEAN_LOOK
 	db 16, CURSE
-	db 21, NIGHT_SHADE
-	db 31, CONFUSE_RAY
-	db 39, DREAM_EATER
+	db 21, RECOVER
+	db 31, NIGHTMARE
+	db 39, SPORE
 	db 48, DESTINY_BOND
 	db 0 ; no more level-up moves
 
@@ -2022,7 +2022,7 @@ DragoniteEvosAttacks:
 	db 1, THUNDER_WAVE
 	db 1, TWISTER
 	db 8, THUNDER_WAVE
-	db 15, TOXIC
+	db 15, DISABLE
 	db 22, LEECH_SEED
 	db 29, RECOVER
 	db 38, POUND

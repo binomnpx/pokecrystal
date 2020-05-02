@@ -283,7 +283,10 @@ HandleBetweenTurnEffects:
 	call CheckFaint_PlayerThenEnemy
 	ret c
 	
-	; Handle Taunt/Encore/Disable
+	; Handle Taunt/Encore
+	
+	call HandleDisable
+	
 	; Handle Yawn
 	
 	call HandlePerishSong
@@ -330,7 +333,10 @@ HandleBetweenTurnEffects:
 	call CheckFaint_EnemyThenPlayer
 	ret c
 	
-	; Handle Taunt/Encore/Disable
+	; Handle Taunt/Encore
+	
+	call HandleDisable
+	
 	; Handle Yawn
 
 	call HandlePerishSong
@@ -1064,141 +1070,141 @@ CheckIfHPIsZero:
 	or [hl]
 	ret
 
-ResidualDamage:
-; Return z if the user fainted before
-; or as a result of residual damage.
-; For Sandstorm damage, see HandleWeather.
+; ResidualDamage:
+; ; Return z if the user fainted before
+; ; or as a result of residual damage.
+; ; For Sandstorm damage, see HandleWeather.
 
-	call HasUserFainted
-	ret z
-; below gets the correct status (PSN or BRN)
-	ld a, BATTLE_VARS_STATUS
-	call GetBattleVar
-	and 1 << PSN | 1 << BRN
-	jr z, .did_psn_brn
+	; call HasUserFainted
+	; ret z
+; ; below gets the correct status (PSN or BRN)
+	; ld a, BATTLE_VARS_STATUS
+	; call GetBattleVar
+	; and 1 << PSN | 1 << BRN
+	; jr z, .did_psn_brn
 
-	ld hl, HurtByPoisonText
-	ld de, ANIM_PSN
-	and 1 << BRN
-	jr z, .got_anim
-	ld hl, HurtByBurnText
-	ld de, ANIM_BRN
-.got_anim
+	; ld hl, HurtByPoisonText
+	; ld de, ANIM_PSN
+	; and 1 << BRN
+	; jr z, .got_anim
+	; ld hl, HurtByBurnText
+	; ld de, ANIM_BRN
+; .got_anim
 
-	push de
-	call StdBattleTextbox ; does animation and prints the "hurt by" text
-	pop de
+	; push de
+	; call StdBattleTextbox ; does animation and prints the "hurt by" text
+	; pop de
 
-	xor a
-	ld [wNumHits], a
-	call Call_PlayBattleAnim_OnlyIfVisible ; do not animate for fly, dig, etc.
-	call GetEighthMaxHP ; dmg stored in bc
-	ld de, wPlayerToxicCount
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .check_toxic ; get enemy's or player's toxic count
-	ld de, wEnemyToxicCount
-.check_toxic
+	; xor a
+	; ld [wNumHits], a
+	; call Call_PlayBattleAnim_OnlyIfVisible ; do not animate for fly, dig, etc.
+	; call GetEighthMaxHP ; dmg stored in bc
+	; ld de, wPlayerToxicCount
+	; ldh a, [hBattleTurn]
+	; and a
+	; jr z, .check_toxic ; get enemy's or player's toxic count
+	; ld de, wEnemyToxicCount
+; .check_toxic
 
-	ld a, BATTLE_VARS_SUBSTATUS5
-	call GetBattleVar
-	bit SUBSTATUS_TOXIC, a
-	jr z, .did_toxic ; skip if no toxic status?
-	call GetSixteenthMaxHP ; dmg stored in bc
-	ld a, [de]
-	inc a
-	ld [de], a
-	ld hl, 0
-.add ; loop for total toxic dmg
-	add hl, bc
-	dec a
-	jr nz, .add
-	ld b, h
-	ld c, l
-.did_toxic
+	; ld a, BATTLE_VARS_SUBSTATUS5
+	; call GetBattleVar
+	; bit SUBSTATUS_TOXIC, a
+	; jr z, .did_toxic ; skip if no toxic status?
+	; call GetSixteenthMaxHP ; dmg stored in bc
+	; ld a, [de]
+	; inc a
+	; ld [de], a
+	; ld hl, 0
+; .add ; loop for total toxic dmg
+	; add hl, bc
+	; dec a
+	; jr nz, .add
+	; ld b, h
+	; ld c, l
+; .did_toxic
 
-	call SubtractHPFromUser
-.did_psn_brn ; skips to here if neither poisined, toxic'd, or burned
+	; call SubtractHPFromUser
+; .did_psn_brn ; skips to here if neither poisined, toxic'd, or burned
 
-	call HasUserFainted
-	jp z, .fainted
+	; call HasUserFainted
+	; jp z, .fainted
 
-	ld a, BATTLE_VARS_SUBSTATUS4
-	call GetBattleVarAddr
-	bit SUBSTATUS_LEECH_SEED, [hl]
-	jr z, .not_seeded
+	; ld a, BATTLE_VARS_SUBSTATUS4
+	; call GetBattleVarAddr
+	; bit SUBSTATUS_LEECH_SEED, [hl]
+	; jr z, .not_seeded
 
-	call SwitchTurnCore ; switch to enemy if player ; switch to player if enemy
-	xor a
-	ld [wNumHits], a
-	ld de, ANIM_SAP
-	ld a, BATTLE_VARS_SUBSTATUS3_OPP ; opposite side of the field (can be player OR enemy)
-	call GetBattleVar
-	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
-	call z, Call_PlayBattleAnim_OnlyIfVisible ; don't animate if the leech seeded is flying/digging
-	call SwitchTurnCore
+	; call SwitchTurnCore ; switch to enemy if player ; switch to player if enemy
+	; xor a
+	; ld [wNumHits], a
+	; ld de, ANIM_SAP
+	; ld a, BATTLE_VARS_SUBSTATUS3_OPP ; opposite side of the field (can be player OR enemy)
+	; call GetBattleVar
+	; and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	; call z, Call_PlayBattleAnim_OnlyIfVisible ; don't animate if the leech seeded is flying/digging
+	; call SwitchTurnCore
 
-	call GetEighthMaxHP
-	call SubtractHPFromUser
-	ld a, $1
-	ldh [hBGMapMode], a
-	call RestoreHP ; oddly enough, this function is already "reversed" (no need for SwitchBattleCore)
-	ld hl, LeechSeedSapsText
-	call StdBattleTextbox
-.not_seeded
+	; call GetEighthMaxHP
+	; call SubtractHPFromUser
+	; ld a, $1
+	; ldh [hBGMapMode], a
+	; call RestoreHP ; oddly enough, this function is already "reversed" (no need for SwitchTurnCore)
+	; ld hl, LeechSeedSapsText
+	; call StdBattleTextbox
+; .not_seeded
 
-	call HasUserFainted ; skip nightmare/curse if user fainted
-	jr z, .fainted
+	; call HasUserFainted ; skip nightmare/curse if user fainted
+	; jr z, .fainted
 
-	ld a, BATTLE_VARS_SUBSTATUS1
-	call GetBattleVarAddr
-	bit SUBSTATUS_NIGHTMARE, [hl]
-	jr z, .not_nightmare
-	xor a
-	ld [wNumHits], a
-	ld de, ANIM_IN_NIGHTMARE
-	call Call_PlayBattleAnim_OnlyIfVisible
-	call GetQuarterMaxHP
-	call SubtractHPFromUser
-	ld hl, HasANightmareText
-	call StdBattleTextbox
-.not_nightmare
+	; ld a, BATTLE_VARS_SUBSTATUS1
+	; call GetBattleVarAddr
+	; bit SUBSTATUS_NIGHTMARE, [hl]
+	; jr z, .not_nightmare
+	; xor a
+	; ld [wNumHits], a
+	; ld de, ANIM_IN_NIGHTMARE
+	; call Call_PlayBattleAnim_OnlyIfVisible
+	; call GetQuarterMaxHP
+	; call SubtractHPFromUser
+	; ld hl, HasANightmareText
+	; call StdBattleTextbox
+; .not_nightmare
 
-	call HasUserFainted
-	jr z, .fainted
+	; call HasUserFainted
+	; jr z, .fainted
 
-	ld a, BATTLE_VARS_SUBSTATUS1
-	call GetBattleVarAddr
-	bit SUBSTATUS_CURSE, [hl]
-	jr z, .not_cursed
+	; ld a, BATTLE_VARS_SUBSTATUS1
+	; call GetBattleVarAddr
+	; bit SUBSTATUS_CURSE, [hl]
+	; jr z, .not_cursed
 
-	xor a
-	ld [wNumHits], a
-	ld de, ANIM_IN_NIGHTMARE
-	call Call_PlayBattleAnim_OnlyIfVisible
-	call GetQuarterMaxHP
-	call SubtractHPFromUser
-	ld hl, HurtByCurseText
-	call StdBattleTextbox
+	; xor a
+	; ld [wNumHits], a
+	; ld de, ANIM_IN_NIGHTMARE
+	; call Call_PlayBattleAnim_OnlyIfVisible
+	; call GetQuarterMaxHP
+	; call SubtractHPFromUser
+	; ld hl, HurtByCurseText
+	; call StdBattleTextbox
 
-.not_cursed
-	ld hl, wBattleMonHP
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .check_fainted
-	ld hl, wEnemyMonHP
+; .not_cursed
+	; ld hl, wBattleMonHP
+	; ldh a, [hBattleTurn]
+	; and a
+	; jr z, .check_fainted
+	; ld hl, wEnemyMonHP
 
-.check_fainted
-	ld a, [hli]
-	or [hl]
-	ret nz
+; .check_fainted
+	; ld a, [hli]
+	; or [hl]
+	; ret nz
 
-.fainted
-	call RefreshBattleHuds
-	ld c, 20
-	call DelayFrames
-	xor a
-	ret
+; .fainted
+	; call RefreshBattleHuds
+	; ld c, 20
+	; call DelayFrames
+	; xor a
+	; ret
 
 HandlePerishSong:
 	ldh a, [hSerialConnectionStatus]
@@ -1846,7 +1852,47 @@ HandleWeather:
 	dw BattleText_TheSunlightFaded
 	dw BattleText_TheSandstormSubsided
 
+HandleLeechSeed:
+	ldh a, [hSerialConnectionStatus]
+	cp USING_EXTERNAL_CLOCK
+	jr z, .enemy_first
 
+.player_first
+	call SetPlayerTurn
+	call .LeechSeedDamage
+	call SetEnemyTurn
+	jr .LeechSeedDamage
+
+.enemy_first
+	call SetEnemyTurn
+	call .LeechSeedDamage
+	call SetPlayerTurn
+
+.LeechSeedDamage:
+	ld a, BATTLE_VARS_SUBSTATUS4
+	call GetBattleVarAddr
+	bit SUBSTATUS_LEECH_SEED, [hl]
+	jr z, .not_seeded
+
+	call SwitchTurnCore ; switch to enemy if player ; switch to player if enemy
+	xor a
+	ld [wNumHits], a
+	ld de, ANIM_SAP
+	ld a, BATTLE_VARS_SUBSTATUS3_OPP ; opposite side of the field (can be player OR enemy)
+	call GetBattleVar
+	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
+	call z, Call_PlayBattleAnim_OnlyIfVisible ; don't animate if the leech seeded is flying/digging
+	call SwitchTurnCore
+
+	call GetEighthMaxHP
+	call SubtractHPFromUser
+	ld a, $1
+	ldh [hBGMapMode], a
+	call RestoreHP ; oddly enough, this function is already "reversed" (no need for SwitchTurnCore)
+	ld hl, LeechSeedSapsText
+	call StdBattleTextbox
+.not_seeded
+	ret
 
 HandlePSNBRN:
 	ldh a, [hSerialConnectionStatus]
@@ -1919,35 +1965,23 @@ HandlePSNBRN:
 .did_psn_brn
 	ret
 
-
-HandleLeechSeed:
-	ld a, BATTLE_VARS_SUBSTATUS4
-	call GetBattleVarAddr
-	bit SUBSTATUS_LEECH_SEED, [hl]
-	jr z, .not_seeded
-
-	call SwitchTurnCore ; switch to enemy if player ; switch to player if enemy
-	xor a
-	ld [wNumHits], a
-	ld de, ANIM_SAP
-	ld a, BATTLE_VARS_SUBSTATUS3_OPP ; opposite side of the field (can be player OR enemy)
-	call GetBattleVar
-	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
-	call z, Call_PlayBattleAnim_OnlyIfVisible ; don't animate if the leech seeded is flying/digging
-	call SwitchTurnCore
-
-	call GetEighthMaxHP
-	call SubtractHPFromUser
-	ld a, $1
-	ldh [hBGMapMode], a
-	call RestoreHP ; oddly enough, this function is already "reversed" (no need for SwitchBattleCore)
-	ld hl, LeechSeedSapsText
-	call StdBattleTextbox
-.not_seeded
-	ret
-
-
 HandleNightmare:
+	ldh a, [hSerialConnectionStatus]
+	cp USING_EXTERNAL_CLOCK
+	jr z, .enemy_first
+
+.player_first
+	call SetPlayerTurn
+	call .NightmareDamage
+	call SetEnemyTurn
+	jr .NightmareDamage
+
+.enemy_first
+	call SetEnemyTurn
+	call .NightmareDamage
+	call SetPlayerTurn
+
+.NightmareDamage:
 	ld a, BATTLE_VARS_SUBSTATUS1
 	call GetBattleVarAddr
 	bit SUBSTATUS_NIGHTMARE, [hl]
@@ -1964,6 +1998,22 @@ HandleNightmare:
 	ret
 
 HandleCurse:
+	ldh a, [hSerialConnectionStatus]
+	cp USING_EXTERNAL_CLOCK
+	jr z, .enemy_first
+
+.player_first
+	call SetPlayerTurn
+	call .CurseDamage
+	call SetEnemyTurn
+	jr .CurseDamage
+
+.enemy_first
+	call SetEnemyTurn
+	call .CurseDamage
+	call SetPlayerTurn
+
+.CurseDamage:
 	ld a, BATTLE_VARS_SUBSTATUS1
 	call GetBattleVarAddr
 	bit SUBSTATUS_CURSE, [hl]
@@ -1979,6 +2029,58 @@ HandleCurse:
 .not_cursed
 	ret
 
+
+HandleDisable:
+	ldh a, [hSerialConnectionStatus]
+	cp USING_EXTERNAL_CLOCK
+	jr z, .enemy_first
+
+	call .DisabledEnemy
+	call SwitchTurnCore
+	call .DisabledPlayer
+	call SwitchTurnCore
+	ret
+
+.enemy_first
+	call .DisabledPlayer
+	call SwitchTurnCore
+	call .DisabledEnemy
+	call SwitchTurnCore
+	ret
+
+.DisabledPlayer
+	ld hl, wPlayerDisableCount
+	ld a, [hl]
+	and a
+	ret z
+	
+	ld hl, wPlayerDisableCount
+	ld a, [hl]
+	and $f
+	ret nz
+
+	ld [wPlayerDisableCount], a
+	ld [wDisabledMove], a
+	ld hl, DisabledNoMoreText
+	call StdBattleTextbox
+	ret
+
+.DisabledEnemy
+	ld hl, wEnemyDisableCount
+	ld a, [hl]
+	and a
+	ret z
+
+	ld hl, wEnemyDisableCount
+	ld a, [hl]
+	and $f
+	ret nz
+
+	ld [wEnemyDisableCount], a
+	ld [wEnemyDisabledMove], a
+	ld hl, DisabledNoMoreText
+	call StdBattleTextbox
+	ret
 
 
 

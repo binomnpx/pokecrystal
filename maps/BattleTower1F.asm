@@ -459,7 +459,7 @@ BattleTower1FClerkScript:
 	; readmem wRandMon3
 	; special GameCornerPrizeMonCheckDex
 	readmem wRandMon3
-	givepoke USE_SCRIPT_VAR, 40 
+	givepoke GENGAR, 40 
 	takecoins BATTLETOWER_COMMON_COINS
 	setflag ENGINE_SHOP_BOUGHT3
 	realquicksave
