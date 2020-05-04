@@ -5,6 +5,8 @@ BattleCommand_StartSandstorm:
 	cp WEATHER_SANDSTORM
 	jr z, .failed
 
+	xor a
+	ld [wBattleWeather2], a
 	ld a, WEATHER_SANDSTORM
 	ld [wBattleWeather], a
 	ld a, 5

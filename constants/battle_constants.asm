@@ -225,6 +225,12 @@ SUBSTATUS_CURLED EQU 0
 	const WEATHER_RAIN_END
 	const WEATHER_SUN_END
 	const WEATHER_SANDSTORM_END
+	
+; values in wBattleWeather2
+	const_def 1
+	const WEATHER_HAIL
+	const WEATHER_HAIL_END
+
 
 ; wBattleAction
 	const_def

@@ -1751,20 +1751,37 @@ HandleScreens:
 	jp StdBattleTextbox
 
 HandleWeather:
+	ld a, [wBattleWeather2]
+	cp WEATHER_NONE
+	jr nz, .isWeather
+	
 	ld a, [wBattleWeather]
 	cp WEATHER_NONE
 	ret z
 
+.isWeather
 	ld hl, wWeatherCount
 	dec [hl]
-	jr z, .ended
+	jp z, .ended
 
 	ld hl, .WeatherMessages
 	call .PrintWeatherMessage
 
 	ld a, [wBattleWeather]
-	cp WEATHER_SANDSTORM
-	ret nz
+	cp WEATHER_RAIN
+	jp z, .doRain
+	
+	ld a, [wBattleWeather]
+	cp WEATHER_SUN
+	jp z, .doSun
+
+	ld a, [wBattleWeather2]
+	cp WEATHER_HAIL
+	jp z, .doHail
+
+	; ld a, [wBattleWeather]
+	; cp WEATHER_SANDSTORM
+	; jr nz, .checkHail
 
 	ldh a, [hSerialConnectionStatus]
 	cp USING_EXTERNAL_CLOCK
@@ -1821,15 +1838,86 @@ HandleWeather:
 	ld hl, SandstormHitsText
 	jp StdBattleTextbox
 
+.doHail
+	; ld a, [wBattleWeather2]
+	; cp WEATHER_HAIL
+	; ret nz
+	
+	ldh a, [hSerialConnectionStatus]
+	cp USING_EXTERNAL_CLOCK
+	jr z, .enemy_first1
+
+.player_first1
+	call SetPlayerTurn
+	call .HailDamage
+	call SetEnemyTurn
+	jr .HailDamage
+
+.enemy_first1
+	call SetEnemyTurn
+	call .HailDamage
+	call SetPlayerTurn
+
+.HailDamage:
+	ld a, BATTLE_VARS_SUBSTATUS3
+	call GetBattleVar
+	bit SUBSTATUS_UNDERGROUND, a
+	ret nz
+
+	ld hl, wBattleMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .ok1
+	ld hl, wEnemyMonType1
+.ok1
+	ld a, [hli]
+	cp ICE
+	ret z
+
+	ld a, [hl]
+	cp ICE
+	ret z
+
+	call SwitchTurnCore
+	xor a
+	ld [wNumHits], a
+	ld de, ANIM_IN_HAIL
+	call Call_PlayBattleAnim
+	call SwitchTurnCore
+	call GetEighthMaxHP
+	call SubtractHPFromUser
+
+	ld hl, HailHitsText
+	jp StdBattleTextbox
+
+.doRain
+	xor a
+	ld [wNumHits], a
+	ld de, RAIN_DANCE
+	call Call_PlayBattleAnim
+	ret
+
+.doSun
+	xor a
+	ld [wNumHits], a
+	ld de, SUNNY_DAY
+	call Call_PlayBattleAnim
+	ret
+
 .ended
 	ld hl, .WeatherEndedMessages
 	call .PrintWeatherMessage
 	xor a
 	ld [wBattleWeather], a
+	ld [wBattleWeather2], a
 	ret
 
 .PrintWeatherMessage:
 	ld a, [wBattleWeather]
+	and a
+	jr nz, .notHail
+	ld a, 4
+.notHail
 	dec a
 	ld c, a
 	ld b, 0
@@ -1845,12 +1933,14 @@ HandleWeather:
 	dw BattleText_RainContinuesToFall
 	dw BattleText_TheSunlightIsStrong
 	dw BattleText_TheSandstormRages
+	dw BattleText_HailContinues
 
 .WeatherEndedMessages:
 ; entries correspond to WEATHER_* constants
 	dw BattleText_TheRainStopped
 	dw BattleText_TheSunlightFaded
 	dw BattleText_TheSandstormSubsided
+	dw BattleText_TheHailStopped
 
 HandleLeechSeed:
 	ldh a, [hSerialConnectionStatus]

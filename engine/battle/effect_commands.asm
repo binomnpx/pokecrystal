@@ -6482,6 +6482,8 @@ INCLUDE "engine/battle/move_effects/perish_song.asm"
 
 INCLUDE "engine/battle/move_effects/sandstorm.asm"
 
+INCLUDE "engine/battle/move_effects/hail.asm"
+
 INCLUDE "engine/battle/move_effects/rollout.asm"
 
 BattleCommand5d:
@@ -6586,6 +6588,13 @@ BattleCommand_TimeBasedHealContinue:
 	dec c ; double
 
 .Weather:
+	ld a, [wBattleWeather2]
+	and a
+	jr z, .noHail
+	dec c
+	jr .Heal
+	
+.noHail
 	ld a, [wBattleWeather]
 	and a
 	jr z, .Heal
@@ -6595,6 +6604,7 @@ BattleCommand_TimeBasedHealContinue:
 	inc c
 	cp WEATHER_SUN
 	jr z, .Heal
+
 	dec c
 	dec c
 

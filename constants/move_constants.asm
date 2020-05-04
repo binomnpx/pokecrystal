@@ -257,9 +257,10 @@
 	const ROCK_SMASH   ; f9
 	const WHIRLPOOL    ; fa
 	const BEAT_UP      ; fb
+	const HAIL		   ; fc
 NUM_ATTACKS EQU const_value + -1
 
-	const MOVE_OR_ANIM_FC ; fc
+	; const MOVE_OR_ANIM_FC ; fc
 	const MOVE_OR_ANIM_FD ; fd
 	const MOVE_OR_ANIM_FE ; fe
 
@@ -288,6 +289,7 @@ NUM_ATTACKS EQU const_value + -1
 	const ANIM_WOBBLE            ; 113
 	const ANIM_SHAKE             ; 114
 	const ANIM_HIT_CONFUSION     ; 115
+	const ANIM_IN_HAIL			 ; 116
 
 ; wNumHits uses offsets from ANIM_MISS
 	const_def

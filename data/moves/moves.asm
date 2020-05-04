@@ -263,4 +263,5 @@ Moves:
 	move ROCK_SMASH,   EFFECT_DEFENSE_DOWN_HIT,   20, FIGHTING, PHYSICAL, 100, 15,  50
 	move WHIRLPOOL,    EFFECT_TRAP_TARGET,        15, WATER,    SPECIAL,   70, 15,   0
 	move BEAT_UP,      EFFECT_BEAT_UP,            10, DARK,     PHYSICAL, 100, 10,   0
+	move HAIL,		   EFFECT_HAIL,				   0, ICE, 		STATUS,   100, 10,   0
 

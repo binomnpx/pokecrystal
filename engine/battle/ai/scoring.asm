@@ -360,6 +360,7 @@ AI_Smart:
 	dbw EFFECT_FORESIGHT,        AI_Smart_Foresight
 	dbw EFFECT_PERISH_SONG,      AI_Smart_PerishSong
 	dbw EFFECT_SANDSTORM,        AI_Smart_Sandstorm
+	dbw EFFECT_HAIL,        	 AI_Smart_Hail
 	dbw EFFECT_ENDURE,           AI_Smart_Endure
 	dbw EFFECT_ROLLOUT,          AI_Smart_Rollout
 	dbw EFFECT_SWAGGER,          AI_Smart_Swagger
@@ -2070,6 +2071,46 @@ AI_Smart_Sandstorm:
 	db ROCK
 	db GROUND
 	db STEEL
+	db -1 ; end
+
+AI_Smart_Hail:
+; Greatly discourage this move if the player is immune to Sandstorm damage.
+	ld a, [wBattleMonType1]
+	push hl
+	ld hl, .HailImmuneTypes
+	ld de, 1
+	call IsInArray
+	pop hl
+	jr c, .asm_dummyhail1
+
+	ld a, [wBattleMonType2]
+	push hl
+	ld hl, .HailImmuneTypes
+	ld de, 1
+	call IsInArray
+	pop hl
+	jr c, .asm_dummyhail1
+
+; Discourage this move if player's HP is below 50%.
+	call AICheckPlayerHalfHP
+	jr nc, .asm_dummyhail2
+
+; 50% chance to encourage this move otherwise.
+	call AI_50_50
+	ret c
+
+	dec [hl]
+	ret
+
+.asm_dummyhail1
+	inc [hl]
+
+.asm_dummyhail2
+	inc [hl]
+	ret
+
+.HailImmuneTypes:
+	db ICE
 	db -1 ; end
 
 AI_Smart_Endure:

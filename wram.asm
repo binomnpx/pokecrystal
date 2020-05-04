@@ -940,7 +940,10 @@ wRandMon4:: db
 wRandMon5:: db
 wRandMon6:: db
 wCoins:: dw
-	ds 13
+;;;;;;;;;;;;;;;;
+wBattleWeather2::
+db ;used for hail
+	ds 12
 
 wUnusedMapBufferEnd::
 

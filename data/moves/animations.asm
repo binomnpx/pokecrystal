@@ -252,7 +252,7 @@ BattleAnimations::
 	dw BattleAnim_RockSmash
 	dw BattleAnim_Whirlpool
 	dw BattleAnim_BeatUp
-	dw BattleAnim_252
+	dw BattleAnim_Hail
 	dw BattleAnim_253
 	dw BattleAnim_254
 	dw BattleAnim_SweetScent2
@@ -279,9 +279,9 @@ BattleAnimations::
 	dw BattleAnim_Wobble
 	dw BattleAnim_Shake
 	dw BattleAnim_HitConfusion
+	dw BattleAnim_InHail
 
 BattleAnim_0:
-BattleAnim_252:
 BattleAnim_253:
 BattleAnim_254:
 BattleAnim_MirrorMove:
@@ -604,6 +604,20 @@ BattleAnim_HitConfusion:
 	anim_sound 0, 0, SFX_POUND
 	anim_obj ANIM_OBJ_04, 44, 96, $0
 	anim_wait 16
+	anim_ret
+
+BattleAnim_InHail:
+	anim_1gfx ANIM_GFX_POWDER
+	anim_obj ANIM_OBJ_HAIL, 88, 0, $0
+	anim_wait 8
+	anim_obj ANIM_OBJ_HAIL, 72, 0, $1
+	anim_wait 8
+	anim_obj ANIM_OBJ_HAIL, 56, 0, $2
+.loop
+	anim_sound 0, 1, SFX_MENU
+	anim_wait 8
+	anim_loop 6, .loop
+	anim_wait 8
 	anim_ret
 
 BattleAnim_Miss:
@@ -4822,3 +4836,20 @@ BattleAnim_ShowMon_1:
 	anim_incobj 1
 	anim_wait 1
 	anim_ret
+
+BattleAnim_Hail:
+	anim_1gfx ANIM_GFX_POWDER
+	anim_obj ANIM_OBJ_HAIL, 88, 0, $0
+	anim_wait 8
+	anim_obj ANIM_OBJ_HAIL, 72, 0, $1
+	anim_wait 8
+	anim_obj ANIM_OBJ_HAIL, 56, 0, $2
+.loop
+	anim_sound 0, 1, SFX_MENU
+	anim_wait 8
+	anim_loop 16, .loop
+	anim_wait 8
+	anim_ret
+
+
+
