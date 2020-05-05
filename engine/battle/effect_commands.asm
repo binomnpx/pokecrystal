@@ -1568,8 +1568,8 @@ BattleCommand_CheckHit:
 	call .Protect
 	jp nz, .Miss
 
-	call .DrainSub
-	jp z, .Miss
+	; call .DrainSub
+	; jp z, .Miss
 
 	call .LockOn
 	ret nz
@@ -1703,23 +1703,23 @@ BattleCommand_CheckHit:
 	and a
 	ret
 
-.DrainSub:
-; Return z if using an HP drain move on a substitute.
-	call CheckSubstituteOpp
-	jr z, .not_draining_sub
+; .DrainSub:
+; ; Return z if using an HP drain move on a substitute.
+	; call CheckSubstituteOpp
+	; jr z, .not_draining_sub
 
-	ld a, BATTLE_VARS_MOVE_EFFECT
-	call GetBattleVar
+	; ld a, BATTLE_VARS_MOVE_EFFECT
+	; call GetBattleVar
 
-	cp EFFECT_LEECH_HIT
-	ret z
-	cp EFFECT_DREAM_EATER
-	ret z
+	; cp EFFECT_LEECH_HIT
+	; ret z
+	; cp EFFECT_DREAM_EATER
+	; ret z
 
-.not_draining_sub
-	ld a, 1
-	and a
-	ret
+; .not_draining_sub
+	; ld a, 1
+	; and a
+	; ret
 
 .FlyDigMoves:
 ; Check for moves that can hit underground/flying opponents.
@@ -3541,12 +3541,12 @@ DoSubstituteDamage:
 	jr nz, .broke
 
 	ld a, [de]
-	sub [hl]
-	ld [de], a
+	cp [hl]
 	jr z, .broke
 	jr nc, .done
 
 .broke
+	push de
 	ld a, BATTLE_VARS_SUBSTATUS4_OPP
 	call GetBattleVarAddr
 	res SUBSTATUS_SUBSTITUTE, [hl]
@@ -3578,8 +3578,37 @@ DoSubstituteDamage:
 	ld [hl], a
 .ok
 	call RefreshBattleHuds
+	
+	pop de
+
+	; ld a, BATTLE_VARS_MOVE_EFFECT
+	; call GetBattleVarAddr
+	; cp EFFECT_LEECH_HIT
+	; jr z, .skip1
+	; cp EFFECT_DREAM_EATER
+	; jr z, .skip1
+	; jp ResetDamage
+
+; .skip1	
+	ld a, [de]
+	ld [wCurDamage + 1], a
+	xor a
+	ld [de], a
+	ret
+	
 .done
-	jp ResetDamage
+	; ld a, BATTLE_VARS_MOVE_EFFECT
+	; call GetBattleVarAddr
+	; cp EFFECT_LEECH_HIT
+	; jr z, .skip2
+	; cp EFFECT_DREAM_EATER
+	; jr z, .skip2
+	; jp ResetDamage
+
+; .skip2
+	sub [hl]
+	ld [de], a
+	ret
 
 UpdateMoveData:
 	ld a, BATTLE_VARS_MOVE_ANIM
@@ -3870,12 +3899,14 @@ ToxicOpponent:
 BattleCommand_DrainTarget:
 ; draintarget
 	call SapHealth
+	call ResetDamage
 	ld hl, SuckedHealthText
 	jp StdBattleTextbox
 
 BattleCommand_EatDream:
 ; eatdream
 	call SapHealth
+	call ResetDamage
 	ld hl, DreamEatenText
 	jp StdBattleTextbox
 
