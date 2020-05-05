@@ -2952,14 +2952,14 @@ BattleCommand_DamageCalc:
 	call GetBattleVar
 
 ; Selfdestruct and Explosion halve defense.
-	cp EFFECT_SELFDESTRUCT
-	jr nz, .dont_selfdestruct
+	; cp EFFECT_SELFDESTRUCT
+	; jr nz, .dont_selfdestruct
 
-	srl c
-	jr nz, .dont_selfdestruct
-	inc c
+	; srl c
+	; jr nz, .dont_selfdestruct
+	; inc c
 
-.dont_selfdestruct
+; .dont_selfdestruct
 
 ; Variable-hit moves and Conversion can have a power of 0.
 	cp EFFECT_MULTI_HIT

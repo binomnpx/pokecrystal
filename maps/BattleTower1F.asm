@@ -295,6 +295,7 @@ BattleTower1FTeacherScript:
 	writetext Text_BattleTowerTeacher
 	waitbutton
 	givecoins 60
+	givepoke DRAGONITE, 40
 	setflag ENGINE_POKEGEAR
 	closetext
 	end
