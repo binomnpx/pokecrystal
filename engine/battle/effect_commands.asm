@@ -1562,6 +1562,8 @@ BattleCommand_DamageVariation:
 BattleCommand_CheckHit:
 ; checkhit
 
+	call BattleCommand_FailIfOppFainted
+
 	call .DreamEater
 	jp z, .Miss
 
@@ -6728,6 +6730,42 @@ CheckHiddenOpponent:
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND
 	ret
+
+BattleCommand_FailIfOppFainted:
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .has_enemy_fainted
+	
+	ld hl, wBattleMonHP
+	jr .check_if_hp_is_zero
+	
+.has_enemy_fainted
+	ld hl, wEnemyMonHP
+
+.check_if_hp_is_zero
+	ld a, [hli]
+	or [hl]
+	ret nz
+	
+	ld a, 1
+	ld [wAttackMissed], a
+	
+	call BattleCommand_MoveDelay
+	
+	ld a, BATTLE_VARS_MOVE_POWER
+	call GetBattleVar
+	and a
+	jr z, .but_it_failed
+	
+	ld hl, NoTargetText
+	call StdBattleTextbox
+	jp EndMoveEffect
+	
+.but_it_failed
+	ld hl, ButItFailedText
+	call StdBattleTextbox
+	jp EndMoveEffect
+
 
 GetUserItem:
 ; Return the effect of the user's item in bc, and its id at hl.

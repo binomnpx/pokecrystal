@@ -181,6 +181,7 @@ ENDM
 	command startloop               ; ae
 	command curl                    ; af
 	command starthail				; b0
+	command failifoppfainted		; b1
 
 	enum_start $fe
 	command endturn                 ; fe

@@ -904,6 +904,11 @@ ButItFailedText:
 	text "But it failed!"
 	prompt
 
+NoTargetText:
+	text "But there was no"
+	line "target..."
+	prompt
+
 ItFailedText:
 	text "It failed!"
 	prompt

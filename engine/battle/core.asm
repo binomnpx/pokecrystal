@@ -955,10 +955,12 @@ Battle_EnemyFirst:
 	jp z, HandleEnemyMonFaint
 
 .switch_item
+
+Finish_Battle_EnemyFirst:
 	call SetEnemyTurn ; set turn to enemy for residual dmg
 	; call ResidualDamage ; apply residual dmg to enemy
 	; jp z, HandleEnemyMonFaint
-	call RefreshBattleHuds
+	; call RefreshBattleHuds
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond ; DoPlayerTurn
 	call CheckMobileBattleError
 	ret c
@@ -972,7 +974,7 @@ Battle_EnemyFirst:
 	call SetPlayerTurn
 	; call ResidualDamage
 	; jp z, HandlePlayerMonFaint
-	call RefreshBattleHuds
+	; call RefreshBattleHuds
 	xor a ; BATTLEPLAYERACTION_USEMOVE
 	ld [wBattlePlayerAction], a
 	ret
@@ -994,13 +996,15 @@ Battle_PlayerFirst:
 	jp z, HandleEnemyMonFaint
 	call HasPlayerFainted
 	jp z, HandlePlayerMonFaint
+	
+Finish_Battle_PlayerFirst:
 	push bc
 	call SetPlayerTurn
 	; call ResidualDamage
 	; pop bc
 	; jp z, HandlePlayerMonFaint
 	; push bc
-	call RefreshBattleHuds
+	; call RefreshBattleHuds
 	pop af
 	jr c, .switched_or_used_item
 	call LoadTileMapToTempTileMap
@@ -1021,7 +1025,7 @@ Battle_PlayerFirst:
 	call SetEnemyTurn
 	; call ResidualDamage
 	; jp z, HandleEnemyMonFaint
-	call RefreshBattleHuds
+	; call RefreshBattleHuds
 	xor a ; BATTLEPLAYERACTION_USEMOVE
 	ld [wBattlePlayerAction], a
 	ret
@@ -1058,11 +1062,20 @@ HasUserFainted:
 	ldh a, [hBattleTurn]
 	and a
 	jr z, HasPlayerFainted
+	
 HasEnemyFainted:
+	ld a, BATTLE_VARS_SUBSTATUS2_OPP
+	call GetBattleVar
+	bit SUBSTATUS_FAINTED, a
+	ret nz
 	ld hl, wEnemyMonHP
 	jr CheckIfHPIsZero
 
 HasPlayerFainted:
+	ld a, BATTLE_VARS_SUBSTATUS2_OPP
+	call GetBattleVar
+	bit SUBSTATUS_FAINTED, a
+	ret nz
 	ld hl, wBattleMonHP
 
 CheckIfHPIsZero:
@@ -2450,6 +2463,22 @@ HandleEnemyMonFaint:
 	jr DoubleSwitch
 
 .player_mon_not_fainted
+	ld a, [wEnemyGoesFirst]
+	and a 
+	jr z, .thing
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .thing
+	
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	set SUBSTATUS_FAINTED, [hl]
+	ld a, BATTLE_VARS_SUBSTATUS3
+	call GetBattleVarAddr
+	set SUBSTATUS_FLYING, [hl]
+	call Finish_Battle_EnemyFirst
+	
+.thing
 	ld a, BATTLEPLAYERACTION_USEITEM
 	ld [wBattlePlayerAction], a
 	call HandleEnemySwitch
@@ -3021,6 +3050,21 @@ HandlePlayerMonFaint:
 	jp z, WinTrainerBattle
 
 .notfainted
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .thing
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .thing
+	
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	set SUBSTATUS_FAINTED, [hl]
+	ld a, BATTLE_VARS_SUBSTATUS3
+	call GetBattleVarAddr
+	set SUBSTATUS_FLYING, [hl]
+	call Finish_Battle_PlayerFirst
+.thing
 	call AskUseNextPokemon
 	jr nc, .switch
 	ld a, $1
@@ -4972,6 +5016,11 @@ UpdatePlayerHUD::
 	ret
 
 DrawPlayerHUD:
+	ld hl, wBattleMonHP
+	ld a, [hli]
+	or [hl]
+	ret z
+
 	xor a
 	ldh [hBGMapMode], a
 
@@ -5110,6 +5159,11 @@ UpdateEnemyHUD::
 	ret
 
 DrawEnemyHUD:
+	ld hl, wEnemyMonHP
+	ld a, [hli]
+	or [hl]
+	ret z
+
 	xor a
 	ldh [hBGMapMode], a
 
@@ -6530,90 +6584,90 @@ LoadEnemyMon:
 
 ; Species-specfic:
 
-; Unown
-	ld a, [wTempEnemyMonSpecies]
-	cp UNOWN
-	jr nz, .Magikarp
+; ; Unown
+	; ld a, [wTempEnemyMonSpecies]
+	; cp UNOWN
+	; jr nz, .Magikarp
 
-; Get letter based on DVs
-	ld hl, wEnemyMonDVs
-	predef GetUnownLetter
-; Can't use any letters that haven't been unlocked
-; If combined with forced shiny battletype, causes an infinite loop
-	call CheckUnownLetter
-	jr c, .GenerateDVs ; try again
+; ; Get letter based on DVs
+	; ld hl, wEnemyMonDVs
+	; predef GetUnownLetter
+; ; Can't use any letters that haven't been unlocked
+; ; If combined with forced shiny battletype, causes an infinite loop
+	; call CheckUnownLetter
+	; jr c, .GenerateDVs ; try again
 
-.Magikarp:
-; These filters are untranslated.
-; They expect at wMagikarpLength a 2-byte value in mm,
-; but the value is in feet and inches (one byte each).
+; .Magikarp:
+; ; These filters are untranslated.
+; ; They expect at wMagikarpLength a 2-byte value in mm,
+; ; but the value is in feet and inches (one byte each).
 
-; The first filter is supposed to make very large Magikarp even rarer,
-; by targeting those 1600 mm (= 5'3") or larger.
-; After the conversion to feet, it is unable to target any,
-; since the largest possible Magikarp is 5'3", and $0503 = 1283 mm.
-	ld a, [wTempEnemyMonSpecies]
-	cp MAGIKARP
-	jr nz, .Happiness
+; ; The first filter is supposed to make very large Magikarp even rarer,
+; ; by targeting those 1600 mm (= 5'3") or larger.
+; ; After the conversion to feet, it is unable to target any,
+; ; since the largest possible Magikarp is 5'3", and $0503 = 1283 mm.
+	; ld a, [wTempEnemyMonSpecies]
+	; cp MAGIKARP
+	; jr nz, .Happiness
 
-; Get Magikarp's length
-	ld de, wEnemyMonDVs
-	ld bc, wPlayerID
-	callfar CalcMagikarpLength
+; ; Get Magikarp's length
+	; ld de, wEnemyMonDVs
+	; ld bc, wPlayerID
+	; callfar CalcMagikarpLength
 
-; No reason to keep going if length > 1536 mm (i.e. if HIGH(length) > 6 feet)
-	ld a, [wMagikarpLength]
-	cp HIGH(1536) ; should be "cp 5", since 1536 mm = 5'0", but HIGH(1536) = 6
-	jr nz, .CheckMagikarpArea
+; ; No reason to keep going if length > 1536 mm (i.e. if HIGH(length) > 6 feet)
+	; ld a, [wMagikarpLength]
+	; cp HIGH(1536) ; should be "cp 5", since 1536 mm = 5'0", but HIGH(1536) = 6
+	; jr nz, .CheckMagikarpArea
 
-; 5% chance of skipping both size checks
-	call Random
-	cp 5 percent
-	jr c, .CheckMagikarpArea
-; Try again if length >= 1616 mm (i.e. if LOW(length) >= 4 inches)
-	ld a, [wMagikarpLength + 1]
-	cp LOW(1616) ; should be "cp 4", since 1616 mm = 5'4", but LOW(1616) = 80
-	jr nc, .GenerateDVs
+; ; 5% chance of skipping both size checks
+	; call Random
+	; cp 5 percent
+	; jr c, .CheckMagikarpArea
+; ; Try again if length >= 1616 mm (i.e. if LOW(length) >= 4 inches)
+	; ld a, [wMagikarpLength + 1]
+	; cp LOW(1616) ; should be "cp 4", since 1616 mm = 5'4", but LOW(1616) = 80
+	; jr nc, .GenerateDVs
 
-; 20% chance of skipping this check
-	call Random
-	cp 20 percent - 1
-	jr c, .CheckMagikarpArea
-; Try again if length >= 1600 mm (i.e. if LOW(length) >= 3 inches)
-	ld a, [wMagikarpLength + 1]
-	cp LOW(1600) ; should be "cp 3", since 1600 mm = 5'3", but LOW(1600) = 64
-	jr nc, .GenerateDVs
+; ; 20% chance of skipping this check
+	; call Random
+	; cp 20 percent - 1
+	; jr c, .CheckMagikarpArea
+; ; Try again if length >= 1600 mm (i.e. if LOW(length) >= 3 inches)
+	; ld a, [wMagikarpLength + 1]
+	; cp LOW(1600) ; should be "cp 3", since 1600 mm = 5'3", but LOW(1600) = 64
+	; jr nc, .GenerateDVs
 
-.CheckMagikarpArea:
-; The "jr z" checks are supposed to be "jr nz".
+; .CheckMagikarpArea:
+; ; The "jr z" checks are supposed to be "jr nz".
 
-; Instead, all maps in GROUP_LAKE_OF_RAGE (Mahogany area)
-; and Routes 20 and 44 are treated as Lake of Rage.
+; ; Instead, all maps in GROUP_LAKE_OF_RAGE (Mahogany area)
+; ; and Routes 20 and 44 are treated as Lake of Rage.
 
-; This also means Lake of Rage Magikarp can be smaller than ones
-; caught elsewhere rather than the other way around.
+; ; This also means Lake of Rage Magikarp can be smaller than ones
+; ; caught elsewhere rather than the other way around.
 
-; Intended behavior enforces a minimum size at Lake of Rage.
-; The real behavior prevents a minimum size in the Lake of Rage area.
+; ; Intended behavior enforces a minimum size at Lake of Rage.
+; ; The real behavior prevents a minimum size in the Lake of Rage area.
 
-; Moreover, due to the check not being translated to feet+inches, all Magikarp
-; smaller than 4'0" may be caught by the filter, a lot more than intended.
-	ld a, [wMapGroup]
-	cp GROUP_LAKE_OF_RAGE
-	jr z, .Happiness
-	ld a, [wMapNumber]
-	cp MAP_LAKE_OF_RAGE
-	jr z, .Happiness
-; 40% chance of not flooring
-	call Random
-	cp 40 percent - 2
-	jr c, .Happiness
-; Try again if length < 1024 mm (i.e. if HIGH(length) < 3 feet)
-	ld a, [wMagikarpLength]
-	cp HIGH(1024) ; should be "cp 3", since 1024 mm = 3'4", but HIGH(1024) = 4
-	jr c, .GenerateDVs ; try again
+; ; Moreover, due to the check not being translated to feet+inches, all Magikarp
+; ; smaller than 4'0" may be caught by the filter, a lot more than intended.
+	; ld a, [wMapGroup]
+	; cp GROUP_LAKE_OF_RAGE
+	; jr z, .Happiness
+	; ld a, [wMapNumber]
+	; cp MAP_LAKE_OF_RAGE
+	; jr z, .Happiness
+; ; 40% chance of not flooring
+	; call Random
+	; cp 40 percent - 2
+	; jr c, .Happiness
+; ; Try again if length < 1024 mm (i.e. if HIGH(length) < 3 feet)
+	; ld a, [wMagikarpLength]
+	; cp HIGH(1024) ; should be "cp 3", since 1024 mm = 3'4", but HIGH(1024) = 4
+	; jr c, .GenerateDVs ; try again
 
-; Finally done with DVs
+; ; Finally done with DVs
 
 .Happiness:
 ; Set happiness
