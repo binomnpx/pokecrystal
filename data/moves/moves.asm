@@ -45,7 +45,7 @@ Moves:
 	move FURY_ATTACK,  EFFECT_MULTI_HIT,          15, NORMAL,   PHYSICAL,  85, 20,   0
 	move HORN_DRILL,   EFFECT_OHKO,                1, NORMAL,   PHYSICAL,  30,  5,   0
 	move TACKLE,       EFFECT_NORMAL_HIT,         35, NORMAL,   PHYSICAL,  95, 35,   0
-	move BODY_SLAM,    EFFECT_PARALYZE_HIT,       255, NORMAL,   PHYSICAL, 100, 15,  30
+	move BODY_SLAM,    EFFECT_PARALYZE_HIT,       85, NORMAL,   PHYSICAL, 100, 15,  30
 	move WRAP,         EFFECT_TRAP_TARGET,        15, NORMAL,   PHYSICAL,  85, 20,   0
 	move TAKE_DOWN,    EFFECT_RECOIL_HIT,         150, NORMAL,   PHYSICAL,  85, 20,   0
 	move THRASH,       EFFECT_RAMPAGE,            90, NORMAL,   PHYSICAL, 100, 20,   0
@@ -64,7 +64,7 @@ Moves:
 	move DISABLE,      EFFECT_DISABLE,             0, NORMAL,   STATUS,    55, 20,   0
 	move ACID,         EFFECT_DEFENSE_DOWN_HIT,   40, POISON,   SPECIAL,  100, 30,  10
 	move EMBER,        EFFECT_BURN_HIT,           40, FIRE,     SPECIAL,  100, 25,  10
-	move FLAMETHROWER, EFFECT_BURN_HIT,           255, FIRE,     SPECIAL,  100, 15,  10
+	move FLAMETHROWER, EFFECT_BURN_HIT,           95, FIRE,     SPECIAL,  100, 15,  10
 	move MIST,         EFFECT_MIST,                0, ICE,      STATUS,   100, 30,   0
 	move WATER_GUN,    EFFECT_NORMAL_HIT,         40, WATER,    SPECIAL,  100, 25,   0
 	move HYDRO_PUMP,   EFFECT_NORMAL_HIT,        120, WATER,    SPECIAL,   80,  5,   0
@@ -100,7 +100,7 @@ Moves:
 	move THUNDER_WAVE, EFFECT_PARALYZE,            0, ELECTRIC, STATUS,   100, 20,   0
 	move THUNDER,      EFFECT_THUNDER,           120, ELECTRIC, SPECIAL,   70, 10,  30
 	move ROCK_THROW,   EFFECT_NORMAL_HIT,         50, ROCK,     PHYSICAL,  90, 15,   0
-	move EARTHQUAKE,   EFFECT_EARTHQUAKE,        255, GROUND,   PHYSICAL, 100, 10,   0
+	move EARTHQUAKE,   EFFECT_EARTHQUAKE,        100, GROUND,   PHYSICAL, 100, 10,   0
 	move FISSURE,      EFFECT_OHKO,                1, GROUND,   PHYSICAL,  30,  5,   0
 	move DIG,          EFFECT_FLY,                60, GROUND,   PHYSICAL, 100, 10,   0
 	move TOXIC,        EFFECT_TOXIC,               0, POISON,   STATUS,    85, 10,   0
@@ -152,7 +152,7 @@ Moves:
 	move DREAM_EATER,  EFFECT_DREAM_EATER,       100, PSYCHIC,  SPECIAL,  100, 15,   0
 	move POISON_GAS,   EFFECT_POISON,              0, POISON,   STATUS,    55, 40,   0
 	move BARRAGE,      EFFECT_MULTI_HIT,          15, NORMAL,   PHYSICAL,  85, 20,   0
-	move LEECH_LIFE,   EFFECT_LEECH_HIT,          250, BUG,      PHYSICAL, 100, 15,   0
+	move LEECH_LIFE,   EFFECT_LEECH_HIT,          20, BUG,      PHYSICAL, 100, 15,   0
 	move LOVELY_KISS,  EFFECT_SLEEP,               0, NORMAL,   STATUS,    75, 10,   0
 	move SKY_ATTACK,   EFFECT_SKY_ATTACK,        140, FLYING,   PHYSICAL,  90,  5,   0
 	move TRANSFORM,    EFFECT_TRANSFORM,           0, NORMAL,   STATUS,   100, 10,   0
@@ -164,7 +164,7 @@ Moves:
 	move SPLASH,       EFFECT_SPLASH,              0, NORMAL,   STATUS,   100, 40,   0
 	move ACID_ARMOR,   EFFECT_DEFENSE_UP_2,        0, POISON,   STATUS,   100, 40,   0
 	move CRABHAMMER,   EFFECT_NORMAL_HIT,         90, WATER,    PHYSICAL,  85, 10,   0
-	move EXPLOSION,    EFFECT_SELFDESTRUCT,      10, NORMAL,   PHYSICAL, 100,  5,   0
+	move EXPLOSION,    EFFECT_SELFDESTRUCT,      250, NORMAL,   PHYSICAL, 100,  5,   0
 	move FURY_SWIPES,  EFFECT_MULTI_HIT,          18, NORMAL,   PHYSICAL,  80, 15,   0
 	move BONEMERANG,   EFFECT_DOUBLE_HIT,         50, GROUND,   PHYSICAL,  90, 10,   0
 	move REST,         EFFECT_HEAL,                0, PSYCHIC,  STATUS,   100, 10,   0

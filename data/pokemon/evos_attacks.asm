@@ -2022,10 +2022,10 @@ DragoniteEvosAttacks:
 	db 1, THUNDER_WAVE
 	db 1, TWISTER
 	db 8, THUNDER_WAVE
-	db 15, MEAN_LOOK
-	db 22, DESTINY_BOND
-	db 29, ENDURE
-	db 38, PSYCH_UP
+	db 15, HAIL
+	db 22, RECOVER
+	db 29, SUNNY_DAY
+	db 38, BODY_SLAM
 	db 47, SAFEGUARD
 	db 55, WING_ATTACK
 	db 61, OUTRAGE
@@ -3028,10 +3028,10 @@ MantineEvosAttacks:
 SkarmoryEvosAttacks:
 	db 0 ; no more evolutions
 	db 1, LEER
-	db 1, PECK
-	db 13, SAND_ATTACK
-	db 19, SWIFT
-	db 25, AGILITY
+	db 1, CURSE
+	db 13, DRILL_PECK
+	db 19, REST
+	db 25, SLEEP_TALK
 	db 37, FURY_ATTACK
 	db 49, STEEL_WING
 	db 0 ; no more level-up moves
@@ -3221,10 +3221,10 @@ BlisseyEvosAttacks:
 	db 4, GROWL
 	db 7, TAIL_WHIP
 	db 10, SOFTBOILED
-	db 13, DOUBLESLAP
-	db 18, MINIMIZE
-	db 23, SING
-	db 28, EGG_BOMB
+	db 13, TOXIC
+	db 18, SOFTBOILED
+	db 23, SEISMIC_TOSS
+	db 28, ICE_BEAM
 	db 33, DEFENSE_CURL
 	db 40, LIGHT_SCREEN
 	db 47, DOUBLE_EDGE
@@ -3307,10 +3307,10 @@ TyranitarEvosAttacks:
 	db 1, LEER
 	db 1, SANDSTORM
 	db 1, SCREECH
-	db 8, SANDSTORM
-	db 15, SCREECH
-	db 22, ROCK_SLIDE
-	db 29, THRASH
+	db 8, ROCK_SLIDE
+	db 15, CRUNCH
+	db 22, EARTHQUAKE
+	db 29, FIRE_BLAST
 	db 38, SCARY_FACE
 	db 47, CRUNCH
 	db 61, EARTHQUAKE

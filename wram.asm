@@ -943,7 +943,9 @@ wCoins:: dw
 ;;;;;;;;;;;;;;;;
 wBattleWeather2::
 db ;used for hail
-	ds 12
+wBattleFlags:: db
+; 0 end of turn
+	ds 11
 
 wUnusedMapBufferEnd::
 

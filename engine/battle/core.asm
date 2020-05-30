@@ -2,6 +2,7 @@
 
 DoBattle:
 	xor a
+	ld [wBattleFlags], a
 	ld [wBattleParticipantsNotFainted], a
 	ld [wBattleParticipantsIncludingFainted], a
 	ld [wBattlePlayerAction], a
@@ -163,6 +164,7 @@ BattleTurn:
 	jp c, .quit
 
 	xor a
+	ld [wBattleFlags], a
 	ld [wPlayerIsSwitching], a
 	ld [wEnemyIsSwitching], a
 	ld [wBattleHasJustStarted], a
@@ -219,11 +221,16 @@ BattleTurn:
 	and a
 	jr nz, .quit
 
-	call HandleBetweenTurnEffects
-	ld a, [wBattleEnded]
-	and a
-	jr nz, .quit
+	; call HandleBetweenTurnEffects
+	; ld a, [wBattleEnded]
+	; and a
+	; jr nz, .quit
+	
+	; call UpdateBattleMonInParty
+	call LoadTileMapToTempTileMap
+	
 	jp .loop
+
 
 .quit
 	ret
@@ -953,7 +960,7 @@ Battle_EnemyFirst:
 	jp z, HandlePlayerMonFaint ; also checks if player lost battle
 	call HasEnemyFainted
 	jp z, HandleEnemyMonFaint
-
+	
 .switch_item
 
 Finish_Battle_EnemyFirst:
@@ -961,6 +968,10 @@ Finish_Battle_EnemyFirst:
 	; call ResidualDamage ; apply residual dmg to enemy
 	; jp z, HandleEnemyMonFaint
 	; call RefreshBattleHuds
+	
+	ld a, 1
+	ld [wBattleFlags], a
+	
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond ; DoPlayerTurn
 	call CheckMobileBattleError
 	ret c
@@ -977,6 +988,9 @@ Finish_Battle_EnemyFirst:
 	; call RefreshBattleHuds
 	xor a ; BATTLEPLAYERACTION_USEMOVE
 	ld [wBattlePlayerAction], a
+	
+	call HandleBetweenTurnEffects
+	
 	ret
 
 Battle_PlayerFirst:
@@ -999,6 +1013,10 @@ Battle_PlayerFirst:
 	
 Finish_Battle_PlayerFirst:
 	push bc
+	
+	ld a, 1
+	ld [wBattleFlags], a
+	
 	call SetPlayerTurn
 	; call ResidualDamage
 	; pop bc
@@ -1028,6 +1046,9 @@ Finish_Battle_PlayerFirst:
 	; call RefreshBattleHuds
 	xor a ; BATTLEPLAYERACTION_USEMOVE
 	ld [wBattlePlayerAction], a
+	
+	call HandleBetweenTurnEffects
+	
 	ret
 
 PlayerTurn_EndOpponentProtectEndureDestinyBond:
@@ -1064,17 +1085,15 @@ HasUserFainted:
 	jr z, HasPlayerFainted
 	
 HasEnemyFainted:
-	ld a, BATTLE_VARS_SUBSTATUS2_OPP
-	call GetBattleVar
-	bit SUBSTATUS_FAINTED, a
+	ld hl, wEnemySubStatus2
+	bit SUBSTATUS_FAINTED, [hl]
 	ret nz
 	ld hl, wEnemyMonHP
 	jr CheckIfHPIsZero
 
 HasPlayerFainted:
-	ld a, BATTLE_VARS_SUBSTATUS2_OPP
-	call GetBattleVar
-	bit SUBSTATUS_FAINTED, a
+	ld hl, wPlayerSubStatus2
+	bit SUBSTATUS_FAINTED, [hl]
 	ret nz
 	ld hl, wBattleMonHP
 
@@ -1220,9 +1239,9 @@ CheckIfHPIsZero:
 	; ret
 
 HandlePerishSong:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .EnemyFirst
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .EnemyFirst
 	call SetPlayerTurn
 	call .do_it
 	call SetEnemyTurn
@@ -1288,9 +1307,9 @@ HandlePerishSong:
 	ret
 
 HandleWrap:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .EnemyFirst
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .EnemyFirst
 	call SetPlayerTurn
 	call .do_it
 	call SetEnemyTurn
@@ -1358,9 +1377,9 @@ SwitchTurnCore:
 	ret
 
 HandleLeftovers:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .DoEnemyFirst
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .DoEnemyFirst
 	call SetPlayerTurn
 	call .do_it
 	call SetEnemyTurn
@@ -1371,7 +1390,11 @@ HandleLeftovers:
 	call .do_it
 	call SetPlayerTurn
 .do_it
-
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVar
+	bit SUBSTATUS_FAINTED, a
+	ret nz
+	
 	callfar GetUserItem
 	ld a, [hl]
 	ld [wNamedObjectIndexBuffer], a
@@ -1545,9 +1568,9 @@ HandleMysteryberry:
 	jp StdBattleTextbox
 
 HandleFutureSight:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .enemy_first
 	call SetPlayerTurn
 	call .do_it
 	call SetEnemyTurn
@@ -1796,9 +1819,9 @@ HandleWeather:
 	; cp WEATHER_SANDSTORM
 	; jr nz, .checkHail
 
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .enemy_first
 
 .player_first
 	call SetPlayerTurn
@@ -1812,10 +1835,15 @@ HandleWeather:
 	call SetPlayerTurn
 
 .SandstormDamage:
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVar
+	bit SUBSTATUS_FAINTED, a
+	jr nz, .sandanim
+
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVar
 	bit SUBSTATUS_UNDERGROUND, a
-	ret nz
+	jr nz, .sandanim
 
 	ld hl, wBattleMonType1
 	ldh a, [hBattleTurn]
@@ -1851,6 +1879,15 @@ HandleWeather:
 	ld hl, SandstormHitsText
 	jp StdBattleTextbox
 
+.sandanim
+	call SwitchTurnCore
+	xor a
+	ld [wNumHits], a
+	ld de, ANIM_IN_SANDSTORM
+	call Call_PlayBattleAnim
+	call SwitchTurnCore
+	ret
+
 .doHail
 	; ld a, [wBattleWeather2]
 	; cp WEATHER_HAIL
@@ -1872,10 +1909,15 @@ HandleWeather:
 	call SetPlayerTurn
 
 .HailDamage:
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVar
+	bit SUBSTATUS_FAINTED, a
+	jr nz, .hailanim
+	
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVar
 	bit SUBSTATUS_UNDERGROUND, a
-	ret nz
+	jr nz, .hailanim
 
 	ld hl, wBattleMonType1
 	ldh a, [hBattleTurn]
@@ -1903,10 +1945,27 @@ HandleWeather:
 	ld hl, HailHitsText
 	jp StdBattleTextbox
 
+.hailanim
+	call SwitchTurnCore
+	xor a
+	ld [wNumHits], a
+	ld de, ANIM_IN_HAIL
+	call Call_PlayBattleAnim
+	call SwitchTurnCore
+	ret
+
 .doRain
 	xor a
 	ld [wNumHits], a
 	ld de, RAIN_DANCE
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .skip1
+	call SetEnemyTurn
+	call Call_PlayBattleAnim
+	call SetPlayerTurn
+	ret
+.skip1
 	call Call_PlayBattleAnim
 	ret
 
@@ -1914,6 +1973,14 @@ HandleWeather:
 	xor a
 	ld [wNumHits], a
 	ld de, SUNNY_DAY
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .skip2
+	call SetEnemyTurn
+	call Call_PlayBattleAnim
+	call SetPlayerTurn
+	ret
+.skip2
 	call Call_PlayBattleAnim
 	ret
 
@@ -1956,9 +2023,9 @@ HandleWeather:
 	dw BattleText_TheHailStopped
 
 HandleLeechSeed:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .enemy_first
 
 .player_first
 	call SetPlayerTurn
@@ -1972,6 +2039,11 @@ HandleLeechSeed:
 	call SetPlayerTurn
 
 .LeechSeedDamage:
+	ld a, BATTLE_VARS_SUBSTATUS2_OPP
+	call GetBattleVar
+	bit SUBSTATUS_FAINTED, a
+	ret nz
+
 	ld a, BATTLE_VARS_SUBSTATUS4
 	call GetBattleVarAddr
 	bit SUBSTATUS_LEECH_SEED, [hl]
@@ -1998,9 +2070,9 @@ HandleLeechSeed:
 	ret
 
 HandlePSNBRN:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .enemy_first
 
 .player_first
 	call SetPlayerTurn
@@ -2069,9 +2141,9 @@ HandlePSNBRN:
 	ret
 
 HandleNightmare:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .enemy_first
 
 .player_first
 	call SetPlayerTurn
@@ -2101,9 +2173,9 @@ HandleNightmare:
 	ret
 
 HandleCurse:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .enemy_first
 
 .player_first
 	call SetPlayerTurn
@@ -2134,9 +2206,9 @@ HandleCurse:
 
 
 HandleDisable:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .enemy_first
 
 	call .DisabledEnemy
 	call SwitchTurnCore
@@ -2439,11 +2511,26 @@ HandleEnemyMonFaint:
 	call CheckEnemyTrainerDefeated
 	jp z, WinTrainerBattle
 
+	ld hl, wEnemySubStatus2
+	set SUBSTATUS_FAINTED, [hl]
+	ld hl, wEnemySubStatus3
+	set SUBSTATUS_FLYING, [hl]
+
 	ld hl, wBattleMonHP
 	ld a, [hli]
 	or [hl]
 	jr nz, .player_mon_not_fainted
 
+	ld hl, wPlayerSubStatus2
+	set SUBSTATUS_FAINTED, [hl]
+
+	ld a, [wBattleFlags]
+	and a
+	jr nz, .skip
+
+	call HandleBetweenTurnEffects
+
+.skip
 	call AskUseNextPokemon
 	jr nc, .dont_flee
 
@@ -2463,22 +2550,31 @@ HandleEnemyMonFaint:
 	jr DoubleSwitch
 
 .player_mon_not_fainted
+
+	ld a, [wBattleFlags]
+	and a
+	jr nz, .thing2
+	
 	ld a, [wEnemyGoesFirst]
 	and a 
-	jr z, .thing
+	jr z, .thing1
 	ldh a, [hBattleTurn]
 	and a
-	jr z, .thing
+	jr z, .thing1
 	
-	ld a, BATTLE_VARS_SUBSTATUS2
-	call GetBattleVarAddr
-	set SUBSTATUS_FAINTED, [hl]
-	ld a, BATTLE_VARS_SUBSTATUS3
-	call GetBattleVarAddr
-	set SUBSTATUS_FLYING, [hl]
+	; ld a, BATTLE_VARS_SUBSTATUS2
+	; call GetBattleVarAddr
+	; set SUBSTATUS_FAINTED, [hl]
+	; ld a, BATTLE_VARS_SUBSTATUS3
+	; call GetBattleVarAddr
+	; set SUBSTATUS_FLYING, [hl]
+	
 	call Finish_Battle_EnemyFirst
+	jr .thing2
 	
-.thing
+.thing1
+	call HandleBetweenTurnEffects
+.thing2
 	ld a, BATTLEPLAYERACTION_USEITEM
 	ld [wBattlePlayerAction], a
 	call HandleEnemySwitch
@@ -3037,7 +3133,10 @@ HandlePlayerMonFaint:
 	ld a, [hli]
 	or [hl]
 	jr nz, .notfainted
+	
 	call UpdateBattleStateAndExperienceAfterEnemyFaint
+	ld hl, wEnemySubStatus2
+	set SUBSTATUS_FAINTED, [hl]
 	ld a, [wBattleMode]
 	dec a
 	jr nz, .trainer
@@ -3050,21 +3149,36 @@ HandlePlayerMonFaint:
 	jp z, WinTrainerBattle
 
 .notfainted
+
+	ld hl, wPlayerSubStatus2
+	set SUBSTATUS_FAINTED, [hl]
+	ld hl, wPlayerSubStatus3
+	set SUBSTATUS_FLYING, [hl]
+	
+	ld a, [wBattleFlags]
+	and a
+	jr nz, .thing2
+	
 	ld a, [wEnemyGoesFirst]
 	and a
-	jr nz, .thing
+	jr nz, .thing1
 	ldh a, [hBattleTurn]
 	and a
-	jr nz, .thing
+	jr nz, .thing1
 	
-	ld a, BATTLE_VARS_SUBSTATUS2
-	call GetBattleVarAddr
-	set SUBSTATUS_FAINTED, [hl]
-	ld a, BATTLE_VARS_SUBSTATUS3
-	call GetBattleVarAddr
-	set SUBSTATUS_FLYING, [hl]
+	; ld a, BATTLE_VARS_SUBSTATUS2
+	; call GetBattleVarAddr
+	; set SUBSTATUS_FAINTED, [hl]
+	; ld a, BATTLE_VARS_SUBSTATUS3
+	; call GetBattleVarAddr
+	; set SUBSTATUS_FLYING, [hl]
+	
 	call Finish_Battle_PlayerFirst
-.thing
+	jr .thing2
+	
+.thing1
+	call HandleBetweenTurnEffects	
+.thing2
 	call AskUseNextPokemon
 	jr nc, .switch
 	ld a, $1
@@ -4032,6 +4146,7 @@ NewEnemyMonStatus:
 	ld [wLastPlayerCounterMove], a
 	ld [wLastEnemyCounterMove], a
 	ld [wLastEnemyMove], a
+	ld [wEnemyMonStatus], a
 	ld hl, wEnemySubStatus1
 rept 4
 	ld [hli], a
@@ -5016,10 +5131,15 @@ UpdatePlayerHUD::
 	ret
 
 DrawPlayerHUD:
-	ld hl, wBattleMonHP
-	ld a, [hli]
-	or [hl]
-	ret z
+	ld hl, wPlayerSubStatus2
+	bit SUBSTATUS_FAINTED, [hl]
+	jr z, .skip
+
+	ld hl, wPlayerSubStatus3
+	bit SUBSTATUS_FLYING, [hl]
+	ret nz
+
+.skip
 
 	xor a
 	ldh [hBGMapMode], a
@@ -5159,10 +5279,15 @@ UpdateEnemyHUD::
 	ret
 
 DrawEnemyHUD:
-	ld hl, wEnemyMonHP
-	ld a, [hli]
-	or [hl]
-	ret z
+	ld hl, wEnemySubStatus2
+	bit SUBSTATUS_FAINTED, [hl]
+	jr z, .skip
+
+	ld hl, wEnemySubStatus3
+	bit SUBSTATUS_FLYING, [hl]
+	ret nz
+
+.skip
 
 	xor a
 	ldh [hBGMapMode], a
@@ -6514,44 +6639,44 @@ LoadEnemyMon:
 
 ; Roaming monsters (Entei, Raikou) work differently
 ; They have their own structs, which are shorter than normal
-	ld a, [wBattleType]
-	cp BATTLETYPE_ROAMING
-	jr nz, .NotRoaming
+	; ld a, [wBattleType]
+	; cp BATTLETYPE_ROAMING
+	; jr nz, .NotRoaming
 
-; Grab HP
-	call GetRoamMonHP
-	ld a, [hl]
-; Check if the HP has been initialized
-	and a
-; We'll do something with the result in a minute
-	push af
+; ; Grab HP
+	; call GetRoamMonHP
+	; ld a, [hl]
+; ; Check if the HP has been initialized
+	; and a
+; ; We'll do something with the result in a minute
+	; push af
 
-; Grab DVs
-	call GetRoamMonDVs
-	inc hl
-	ld a, [hld]
-	ld c, a
-	ld b, [hl]
+; ; Grab DVs
+	; call GetRoamMonDVs
+	; inc hl
+	; ld a, [hld]
+	; ld c, a
+	; ld b, [hl]
 
-; Get back the result of our check
-	pop af
-; If the RoamMon struct has already been initialized, we're done
-	jr nz, .UpdateDVs
+; ; Get back the result of our check
+	; pop af
+; ; If the RoamMon struct has already been initialized, we're done
+	; jr nz, .UpdateDVs
 
-; If it hasn't, we need to initialize the DVs
-; (HP is initialized at the end of the battle)
-	call GetRoamMonDVs
-	inc hl
-	call BattleRandom
-	ld [hld], a
-	ld c, a
-	call BattleRandom
-	ld [hl], a
-	ld b, a
-; We're done with DVs
-	jr .UpdateDVs
+; ; If it hasn't, we need to initialize the DVs
+; ; (HP is initialized at the end of the battle)
+	; call GetRoamMonDVs
+	; inc hl
+	; call BattleRandom
+	; ld [hld], a
+	; ld c, a
+	; call BattleRandom
+	; ld [hl], a
+	; ld b, a
+; ; We're done with DVs
+	; jr .UpdateDVs
 
-.NotRoaming:
+; .NotRoaming:
 ; Register a contains wBattleType
 
 ; Forced shiny battle type
@@ -6719,26 +6844,26 @@ LoadEnemyMon:
 	ld [hl], a
 
 ; ..unless it's a RoamMon
-	ld a, [wBattleType]
-	cp BATTLETYPE_ROAMING
-	jr nz, .Moves
+	; ld a, [wBattleType]
+	; cp BATTLETYPE_ROAMING
+	; jr nz, .Moves
 
-; Grab HP
-	call GetRoamMonHP
-	ld a, [hl]
-; Check if it's been initialized again
-	and a
-	jr z, .InitRoamHP
-; Update from the struct if it has
-	ld a, [hl]
-	ld [wEnemyMonHP + 1], a
-	jr .Moves
+; ; Grab HP
+	; call GetRoamMonHP
+	; ld a, [hl]
+; ; Check if it's been initialized again
+	; and a
+	; jr z, .InitRoamHP
+; ; Update from the struct if it has
+	; ld a, [hl]
+	; ld [wEnemyMonHP + 1], a
+	; jr .Moves
 
-.InitRoamHP:
-; HP only uses the lo byte in the RoamMon struct since
-; Raikou and Entei will have < 256 hp at level 40
-	ld a, [wEnemyMonHP + 1]
-	ld [hl], a
+; .InitRoamHP:
+; ; HP only uses the lo byte in the RoamMon struct since
+; ; Raikou and Entei will have < 256 hp at level 40
+	; ld a, [wEnemyMonHP + 1]
+	; ld [hl], a
 	jr .Moves
 
 .OpponentParty:
@@ -8732,7 +8857,7 @@ ExitBattle:
 	ld a, [wBattleResult]
 	and $f
 	ret nz
-	call CheckPayDay
+	; call CheckPayDay
 	xor a
 	ld [wForceEvolution], a
 	predef EvolveAfterBattle
@@ -8740,7 +8865,7 @@ ExitBattle:
 	ret
 
 CleanUpBattleRAM:
-	call BattleEnd_HandleRoamMons
+	; call BattleEnd_HandleRoamMons
 	xor a
 	ld [wLowHealthAlarm], a
 	ld [wBattleMode], a
@@ -8771,40 +8896,40 @@ CleanUpBattleRAM:
 	call WaitSFX
 	ret
 
-CheckPayDay:
-	ld hl, wPayDayMoney
-	ld a, [hli]
-	or [hl]
-	inc hl
-	or [hl]
-	ret z
-	ld a, [wAmuletCoin]
-	and a
-	jr z, .okay
-	ld hl, wPayDayMoney + 2
-	sla [hl]
-	dec hl
-	rl [hl]
-	dec hl
-	rl [hl]
-	jr nc, .okay
-	ld a, $ff
-	ld [hli], a
-	ld [hli], a
-	ld [hl], a
+; CheckPayDay:
+	; ld hl, wPayDayMoney
+	; ld a, [hli]
+	; or [hl]
+	; inc hl
+	; or [hl]
+	; ret z
+	; ld a, [wAmuletCoin]
+	; and a
+	; jr z, .okay
+	; ld hl, wPayDayMoney + 2
+	; sla [hl]
+	; dec hl
+	; rl [hl]
+	; dec hl
+	; rl [hl]
+	; jr nc, .okay
+	; ld a, $ff
+	; ld [hli], a
+	; ld [hli], a
+	; ld [hl], a
 
-.okay
-	ld hl, wPayDayMoney + 2
-	ld de, wMoney + 2
-	call AddBattleMoneyToAccount
-	ld hl, BattleText_PlayerPickedUpPayDayMoney
-	call StdBattleTextbox
-	ld a, [wInBattleTowerBattle]
-	bit 0, a
-	ret z
-	call ClearTileMap
-	call ClearBGPalettes
-	ret
+; .okay
+	; ld hl, wPayDayMoney + 2
+	; ld de, wMoney + 2
+	; call AddBattleMoneyToAccount
+	; ld hl, BattleText_PlayerPickedUpPayDayMoney
+	; call StdBattleTextbox
+	; ld a, [wInBattleTowerBattle]
+	; bit 0, a
+	; ret z
+	; call ClearTileMap
+	; call ClearBGPalettes
+	; ret
 
 ShowLinkBattleParticipantsAfterEnd:
 	farcall StubbedTrainerRankings_LinkBattles
@@ -9053,106 +9178,106 @@ ReadAndPrintLinkBattleRecord:
 .Total:
 	db "TOTAL  WIN LOSE DRAW@"
 
-BattleEnd_HandleRoamMons:
-	ld a, [wBattleType]
-	cp BATTLETYPE_ROAMING
-	jr nz, .not_roaming
-	ld a, [wBattleResult]
-	and $f
-	jr z, .caught_or_defeated_roam_mon ; WIN
-	call GetRoamMonHP
-	ld a, [wEnemyMonHP + 1]
-	ld [hl], a
-	jr .update_roam_mons
+; BattleEnd_HandleRoamMons:
+	; ld a, [wBattleType]
+	; cp BATTLETYPE_ROAMING
+	; jr nz, .not_roaming
+	; ld a, [wBattleResult]
+	; and $f
+	; jr z, .caught_or_defeated_roam_mon ; WIN
+	; call GetRoamMonHP
+	; ld a, [wEnemyMonHP + 1]
+	; ld [hl], a
+	; jr .update_roam_mons
 
-.caught_or_defeated_roam_mon
-	call GetRoamMonHP
-	ld [hl], 0
-	call GetRoamMonMapGroup
-	ld [hl], GROUP_N_A
-	call GetRoamMonMapNumber
-	ld [hl], MAP_N_A
-	call GetRoamMonSpecies
-	ld [hl], 0
-	ret
+; .caught_or_defeated_roam_mon
+	; call GetRoamMonHP
+	; ld [hl], 0
+	; call GetRoamMonMapGroup
+	; ld [hl], GROUP_N_A
+	; call GetRoamMonMapNumber
+	; ld [hl], MAP_N_A
+	; call GetRoamMonSpecies
+	; ld [hl], 0
+	; ret
 
-.not_roaming
-	call BattleRandom
-	and $f
-	ret nz
+; .not_roaming
+	; call BattleRandom
+	; and $f
+	; ret nz
 
-.update_roam_mons
-	callfar UpdateRoamMons
-	ret
+; .update_roam_mons
+	; callfar UpdateRoamMons
+	; ret
 
-GetRoamMonMapGroup:
-	ld a, [wTempEnemyMonSpecies]
-	ld b, a
-	ld a, [wRoamMon1Species]
-	cp b
-	ld hl, wRoamMon1MapGroup
-	ret z
-	ld a, [wRoamMon2Species]
-	cp b
-	ld hl, wRoamMon2MapGroup
-	ret z
-	ld hl, wRoamMon3MapGroup
-	ret
+; GetRoamMonMapGroup:
+	; ld a, [wTempEnemyMonSpecies]
+	; ld b, a
+	; ld a, [wRoamMon1Species]
+	; cp b
+	; ld hl, wRoamMon1MapGroup
+	; ret z
+	; ld a, [wRoamMon2Species]
+	; cp b
+	; ld hl, wRoamMon2MapGroup
+	; ret z
+	; ld hl, wRoamMon3MapGroup
+	; ret
 
-GetRoamMonMapNumber:
-	ld a, [wTempEnemyMonSpecies]
-	ld b, a
-	ld a, [wRoamMon1Species]
-	cp b
-	ld hl, wRoamMon1MapNumber
-	ret z
-	ld a, [wRoamMon2Species]
-	cp b
-	ld hl, wRoamMon2MapNumber
-	ret z
-	ld hl, wRoamMon3MapNumber
-	ret
+; GetRoamMonMapNumber:
+	; ld a, [wTempEnemyMonSpecies]
+	; ld b, a
+	; ld a, [wRoamMon1Species]
+	; cp b
+	; ld hl, wRoamMon1MapNumber
+	; ret z
+	; ld a, [wRoamMon2Species]
+	; cp b
+	; ld hl, wRoamMon2MapNumber
+	; ret z
+	; ld hl, wRoamMon3MapNumber
+	; ret
 
-GetRoamMonHP:
-; output: hl = wRoamMonHP
-	ld a, [wTempEnemyMonSpecies]
-	ld b, a
-	ld a, [wRoamMon1Species]
-	cp b
-	ld hl, wRoamMon1HP
-	ret z
-	ld a, [wRoamMon2Species]
-	cp b
-	ld hl, wRoamMon2HP
-	ret z
-	ld hl, wRoamMon3HP
-	ret
+; GetRoamMonHP:
+; ; output: hl = wRoamMonHP
+	; ld a, [wTempEnemyMonSpecies]
+	; ld b, a
+	; ld a, [wRoamMon1Species]
+	; cp b
+	; ld hl, wRoamMon1HP
+	; ret z
+	; ld a, [wRoamMon2Species]
+	; cp b
+	; ld hl, wRoamMon2HP
+	; ret z
+	; ld hl, wRoamMon3HP
+	; ret
 
-GetRoamMonDVs:
-; output: hl = wRoamMonDVs
-	ld a, [wTempEnemyMonSpecies]
-	ld b, a
-	ld a, [wRoamMon1Species]
-	cp b
-	ld hl, wRoamMon1DVs
-	ret z
-	ld a, [wRoamMon2Species]
-	cp b
-	ld hl, wRoamMon2DVs
-	ret z
-	ld hl, wRoamMon3DVs
-	ret
+; GetRoamMonDVs:
+; ; output: hl = wRoamMonDVs
+	; ld a, [wTempEnemyMonSpecies]
+	; ld b, a
+	; ld a, [wRoamMon1Species]
+	; cp b
+	; ld hl, wRoamMon1DVs
+	; ret z
+	; ld a, [wRoamMon2Species]
+	; cp b
+	; ld hl, wRoamMon2DVs
+	; ret z
+	; ld hl, wRoamMon3DVs
+	; ret
 
-GetRoamMonSpecies:
-	ld a, [wTempEnemyMonSpecies]
-	ld hl, wRoamMon1Species
-	cp [hl]
-	ret z
-	ld hl, wRoamMon2Species
-	cp [hl]
-	ret z
-	ld hl, wRoamMon3Species
-	ret
+; GetRoamMonSpecies:
+	; ld a, [wTempEnemyMonSpecies]
+	; ld hl, wRoamMon1Species
+	; cp [hl]
+	; ret z
+	; ld hl, wRoamMon2Species
+	; cp [hl]
+	; ret z
+	; ld hl, wRoamMon3Species
+	; ret
 
 AddLastMobileBattleToLinkRecord:
 	ld hl, wOTPlayerID

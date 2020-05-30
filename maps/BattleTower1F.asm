@@ -295,7 +295,9 @@ BattleTower1FTeacherScript:
 	writetext Text_BattleTowerTeacher
 	waitbutton
 	givecoins 60
-	givepoke DRAGONITE, 40
+	givepoke SKARMORY, 30, MINT_BERRY
+	givepoke BLISSEY, 30, LEFTOVERS
+	givepoke TYRANITAR, 30, MIRACLEBERRY
 	setflag ENGINE_POKEGEAR
 	closetext
 	end
