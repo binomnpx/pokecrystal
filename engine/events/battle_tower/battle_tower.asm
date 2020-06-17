@@ -257,7 +257,6 @@ RunBattleTowerTrainer:
 	; ld a, "@"
 	; ld [hl], a
 	
-	push bc
 	ld hl, wStringBuffer3
 	ld a, [wNrOfBeatenBattleTowerTrainers]
 	cp 9
@@ -298,7 +297,6 @@ RunBattleTowerTrainer:
 	ld [hl], a
 
 .lost
-	pop bc
 	pop af
 	ld [wInBattleTowerBattle], a
 	pop af
