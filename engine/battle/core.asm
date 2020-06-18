@@ -254,41 +254,66 @@ Stubbed_Function3c1bf:
 	ret
 
 HandleBetweenTurnEffects:
+	; ldh a, [hSerialConnectionStatus]
+	; cp USING_EXTERNAL_CLOCK
+
+	ld de, wBattleMonSpeed
+	ld hl, wEnemyMonSpeed
+	ld c, 2
+	call CompareBytes
+	jr z, .speed_tie
+	jp nc, .player_first
+	jp .enemy_first
+
+.speed_tie
 	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .CheckEnemyFirst
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	cp USING_INTERNAL_CLOCK
+	jr z, .player_2c
+	call BattleRandom
+	cp 50 percent + 1
+	jp c, .player_first
+	jp .enemy_first
+
+.player_2c
+	call BattleRandom
+	cp 50 percent + 1
+	jp c, .enemy_first
+.player_first
+	xor a
+	ld [wEnemyGoesFirst], a
+
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	call HandleWeather
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	call HandleFutureSight
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	
 	; + Handle Wish
 	call HandleLeftovers
 	; + Handle Hydration/Shed Skin + Leftovers/Black Sludge
 	
 	call HandleLeechSeed
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	
 	call HandlePSNBRN
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	
 	call HandleNightmare
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	
 	call HandleCurse
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	
 	call HandleWrap
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	
 	; Handle Taunt/Encore
 	
@@ -297,8 +322,8 @@ HandleBetweenTurnEffects:
 	; Handle Yawn
 	
 	call HandlePerishSong
-	call CheckFaint_PlayerThenEnemy
-	ret c
+	; call CheckFaint_PlayerThenEnemy
+	; ret c
 	
 	; Handle Screens
 	; Handle Safeguard
@@ -306,39 +331,42 @@ HandleBetweenTurnEffects:
 	
 	jr .NoMoreFaintingConditions
 
-.CheckEnemyFirst:
-	call CheckFaint_EnemyThenPlayer
-	ret c
+.enemy_first
+	ld a, 1
+	ld [wEnemyGoesFirst], a
+	
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 	call HandleWeather
-	call CheckFaint_EnemyThenPlayer
-	ret c
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 	call HandleFutureSight
-	call CheckFaint_EnemyThenPlayer
-	ret c
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 	
 	; + Handle Wish
 	call HandleLeftovers
 	; + Handle Hydration/Shed Skin + Leftovers/Black Sludge
 
 	call HandleLeechSeed
-	call CheckFaint_EnemyThenPlayer
-	ret c
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 
 	call HandlePSNBRN
-	call CheckFaint_EnemyThenPlayer
-	ret c
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 	
 	call HandleNightmare
-	call CheckFaint_EnemyThenPlayer
-	ret c
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 	
 	call HandleCurse
-	call CheckFaint_EnemyThenPlayer
-	ret c
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 
 	call HandleWrap
-	call CheckFaint_EnemyThenPlayer
-	ret c
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 	
 	; Handle Taunt/Encore
 	
@@ -347,8 +375,8 @@ HandleBetweenTurnEffects:
 	; Handle Yawn
 
 	call HandlePerishSong
-	call CheckFaint_EnemyThenPlayer
-	ret c
+	; call CheckFaint_EnemyThenPlayer
+	; ret c
 	
 	; Handle Screens
 	; Handle Safeguard
@@ -364,7 +392,34 @@ HandleBetweenTurnEffects:
 	call HandleHealingItems
 	call UpdateBattleMonInParty
 	call LoadTileMapToTempTileMap
-	jp HandleEncore
+	call HandleEncore
+	call HasPlayerFainted
+	call z, ContinueHandlePlayerMonFaint
+	call HasEnemyFainted
+	call z, ContinueHandleEnemyMonFaint
+	ret
+
+CheckBetweenFaint:
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	call HasPlayerFainted
+	ret nz
+	call RefreshBattleHuds
+	ld c, 20
+	call DelayFrames
+	xor a
+	call FaintYourPokemon
+	ret
+.enemy
+	call HasEnemyFainted
+	ret nz
+	call RefreshBattleHuds
+	ld c, 20
+	call DelayFrames
+	xor a
+	call FaintEnemyPokemon
+	ret
 
 CheckFaint_PlayerThenEnemy:
 	call HasPlayerFainted
@@ -969,8 +1024,8 @@ Finish_Battle_EnemyFirst:
 	; jp z, HandleEnemyMonFaint
 	; call RefreshBattleHuds
 	
-	ld a, 1
-	ld [wBattleFlags], a
+	ld hl, wBattleFlags
+	set BATTLEFLAG_ENDTURN, [hl]
 	
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond ; DoPlayerTurn
 	call CheckMobileBattleError
@@ -1014,8 +1069,8 @@ Battle_PlayerFirst:
 Finish_Battle_PlayerFirst:
 	push bc
 	
-	ld a, 1
-	ld [wBattleFlags], a
+	ld hl, wBattleFlags
+	set BATTLEFLAG_ENDTURN, [hl]
 	
 	call SetPlayerTurn
 	; call ResidualDamage
@@ -1823,7 +1878,6 @@ HandleWeather:
 	and a
 	jr nz, .enemy_first
 
-.player_first
 	call SetPlayerTurn
 	call .SandstormDamage
 	call SetEnemyTurn
@@ -1877,7 +1931,9 @@ HandleWeather:
 	call SubtractHPFromUser
 
 	ld hl, SandstormHitsText
-	jp StdBattleTextbox
+	call StdBattleTextbox
+	call CheckBetweenFaint
+	ret
 
 .sandanim
 	call SwitchTurnCore
@@ -1893,11 +1949,10 @@ HandleWeather:
 	; cp WEATHER_HAIL
 	; ret nz
 	
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first1
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .enemy_first1
 
-.player_first1
 	call SetPlayerTurn
 	call .HailDamage
 	call SetEnemyTurn
@@ -1943,7 +1998,9 @@ HandleWeather:
 	call SubtractHPFromUser
 
 	ld hl, HailHitsText
-	jp StdBattleTextbox
+	call StdBattleTextbox
+	call CheckBetweenFaint
+	ret
 
 .hailanim
 	call SwitchTurnCore
@@ -2066,6 +2123,7 @@ HandleLeechSeed:
 	call RestoreHP ; oddly enough, this function is already "reversed" (no need for SwitchTurnCore)
 	ld hl, LeechSeedSapsText
 	call StdBattleTextbox
+	call CheckBetweenFaint
 .not_seeded
 	ret
 
@@ -2137,6 +2195,7 @@ HandlePSNBRN:
 .did_toxic
 
 	call SubtractHPFromUser
+	call CheckBetweenFaint
 .did_psn_brn
 	ret
 
@@ -2169,6 +2228,7 @@ HandleNightmare:
 	call SubtractHPFromUser
 	ld hl, HasANightmareText
 	call StdBattleTextbox
+	call CheckBetweenFaint
 .not_nightmare
 	ret
 
@@ -2201,6 +2261,7 @@ HandleCurse:
 	call SubtractHPFromUser
 	ld hl, HurtByCurseText
 	call StdBattleTextbox
+	call CheckBetweenFaint
 .not_cursed
 	ret
 
@@ -2477,6 +2538,7 @@ UpdateHPBar:
 
 HandleEnemyMonFaint:
 	call FaintEnemyPokemon
+ContinueHandleEnemyMonFaint:
 	ld hl, wBattleMonHP
 	ld a, [hli]
 	or [hl]
@@ -2488,6 +2550,16 @@ HandleEnemyMonFaint:
 	ld a, d
 	and a
 	jp z, LostBattle
+
+
+	; ld a, 1
+	; and a
+	
+	; ld hl, wBattleFlags
+	; bit BATTLEFLAG_BETWEENTURN, [hl]
+	; ret nz
+	
+; ContinueHandleEnemyMonFaint:
 
 	ld hl, wBattleMonHP
 	ld a, [hli]
@@ -2524,8 +2596,11 @@ HandleEnemyMonFaint:
 	ld hl, wPlayerSubStatus2
 	set SUBSTATUS_FAINTED, [hl]
 
-	ld a, [wBattleFlags]
+	ld a, 1
 	and a
+
+	ld hl, wBattleFlags
+	bit BATTLEFLAG_ENDTURN, [hl]
 	jr nz, .skip
 
 	call HandleBetweenTurnEffects
@@ -2551,8 +2626,11 @@ HandleEnemyMonFaint:
 
 .player_mon_not_fainted
 
-	ld a, [wBattleFlags]
+	ld a, 1
 	and a
+
+	ld hl, wBattleFlags
+	bit BATTLEFLAG_ENDTURN, [hl]
 	jr nz, .thing2
 	
 	ld a, [wEnemyGoesFirst]
@@ -3118,6 +3196,7 @@ INCLUDE "data/trainers/leaders.asm"
 
 HandlePlayerMonFaint:
 	call FaintYourPokemon
+ContinueHandlePlayerMonFaint:
 	ld hl, wEnemyMonHP
 	ld a, [hli]
 	or [hl]
@@ -3129,6 +3208,16 @@ HandlePlayerMonFaint:
 	ld a, d
 	and a
 	jp z, LostBattle
+	
+	; ld a, 1
+	; and a
+	
+	; ld hl, wBattleFlags
+	; bit BATTLEFLAG_BETWEENTURN, [hl]
+	; ret nz
+
+; ContinueHandlePlayerMonFaint:
+
 	ld hl, wEnemyMonHP
 	ld a, [hli]
 	or [hl]
@@ -3155,8 +3244,11 @@ HandlePlayerMonFaint:
 	ld hl, wPlayerSubStatus3
 	set SUBSTATUS_FLYING, [hl]
 	
-	ld a, [wBattleFlags]
+	ld a, 1
 	and a
+	
+	ld hl, wBattleFlags
+	bit BATTLEFLAG_ENDTURN, [hl]
 	jr nz, .thing2
 	
 	ld a, [wEnemyGoesFirst]
@@ -5131,15 +5223,10 @@ UpdatePlayerHUD::
 	ret
 
 DrawPlayerHUD:
-	ld hl, wPlayerSubStatus2
-	bit SUBSTATUS_FAINTED, [hl]
-	jr z, .skip
-
-	ld hl, wPlayerSubStatus3
-	bit SUBSTATUS_FLYING, [hl]
-	ret nz
-
-.skip
+	ld hl, wBattleMonHP
+	ld a, [hli]
+	or [hl]
+	ret z
 
 	xor a
 	ldh [hBGMapMode], a
@@ -5279,15 +5366,10 @@ UpdateEnemyHUD::
 	ret
 
 DrawEnemyHUD:
-	ld hl, wEnemySubStatus2
-	bit SUBSTATUS_FAINTED, [hl]
-	jr z, .skip
-
-	ld hl, wEnemySubStatus3
-	bit SUBSTATUS_FLYING, [hl]
-	ret nz
-
-.skip
+	ld hl, wEnemyMonHP
+	ld a, [hli]
+	or [hl]
+	ret z
 
 	xor a
 	ldh [hBGMapMode], a
