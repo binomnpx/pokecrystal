@@ -30,7 +30,7 @@
 	const FIRE_STONE   ; 16
 	const THUNDERSTONE ; 17
 	const WATER_STONE  ; 18
-	const ITEM_19      ; 19
+	const EVIOLITE     ; 19
 	const HP_UP        ; 1a
 	const PROTEIN      ; 1b
 	const IRON         ; 1c
@@ -50,12 +50,12 @@
 	const SUPER_REPEL  ; 2a
 	const MAX_REPEL    ; 2b
 	const DIRE_HIT     ; 2c
-	const ITEM_2D      ; 2d
+	const ASSAULT_VEST ; 2d
 	const FRESH_WATER  ; 2e
 	const SODA_POP     ; 2f
 	const LEMONADE     ; 30
 	const X_ATTACK     ; 31
-	const ITEM_32      ; 32
+	const LIGHT_CLAY   ; 32
 	const X_DEFEND     ; 33
 	const X_SPEED      ; 34
 	const X_SPECIAL    ; 35
@@ -95,7 +95,7 @@
 	const BIG_MUSHROOM ; 57
 	const SILVERPOWDER ; 58
 	const BLU_APRICORN ; 59
-	const ITEM_5A      ; 5a
+	const DAMP_ROCK    ; 5a
 	const AMULET_COIN  ; 5b
 	const YLW_APRICORN ; 5c
 	const GRN_APRICORN ; 5d
@@ -105,7 +105,7 @@
 	const WHT_APRICORN ; 61
 	const BLACKBELT    ; 62
 	const BLK_APRICORN ; 63
-	const ITEM_64      ; 64
+	const HEAT_ROCK    ; 64
 	const PNK_APRICORN ; 65
 	const BLACKGLASSES ; 66
 	const SLOWPOKETAIL ; 67
@@ -125,7 +125,7 @@
 	const MIRACLE_SEED ; 75
 	const THICK_CLUB   ; 76
 	const FOCUS_BAND   ; 77
-	const ITEM_78      ; 78
+	const ICY_ROCK     ; 78
 	const ENERGYPOWDER ; 79
 	const ENERGY_ROOT  ; 7a
 	const HEAL_POWDER  ; 7b

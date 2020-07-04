@@ -24,7 +24,7 @@ ItemDescriptions:
 	dw FireStoneDesc
 	dw ThunderStoneDesc
 	dw WaterStoneDesc
-	dw TeruSama2Desc
+	dw EvioliteDesc
 	dw HPUpDesc
 	dw ProteinDesc
 	dw IronDesc
@@ -44,12 +44,12 @@ ItemDescriptions:
 	dw SuperRepelDesc
 	dw MaxRepelDesc
 	dw DireHitDesc
-	dw TeruSama3Desc
+	dw AssaultVestDesc
 	dw FreshWaterDesc
 	dw SodaPopDesc
 	dw LemonadeDesc
 	dw XAttackDesc
-	dw TeruSama4Desc
+	dw LightClayDesc
 	dw XDefendDesc
 	dw XSpeedDesc
 	dw XSpecialDesc
@@ -89,7 +89,7 @@ ItemDescriptions:
 	dw BigMushroomDesc
 	dw SilverPowderDesc
 	dw BluApricornDesc
-	dw TeruSama6Desc
+	dw DampRockDesc
 	dw AmuletCoinDesc
 	dw YlwApricornDesc
 	dw GrnApricornDesc
@@ -99,7 +99,7 @@ ItemDescriptions:
 	dw WhtApricornDesc
 	dw BlackbeltDesc
 	dw BlkApricornDesc
-	dw TeruSama7Desc
+	dw HeatRockDesc
 	dw PnkApricornDesc
 	dw BlackGlassesDesc
 	dw SlowpokeTailDesc
@@ -119,7 +119,7 @@ ItemDescriptions:
 	dw MiracleSeedDesc
 	dw ThickClubDesc
 	dw FocusBandDesc
-	dw TeruSama8Desc
+	dw IcyRockDesc
 	dw EnergyPowderDesc
 	dw EnergyRootDesc
 	dw HealPowderDesc
@@ -351,9 +351,10 @@ WaterStoneDesc:
 	db   "Evolves certain"
 	next "kinds of #MON.@"
 
-TeruSama2Desc:
-	db   "?@"
-
+EvioliteDesc:
+	db   "Non-evo'd #MON's"
+	next "def's go up. (HOLD)@"
+	
 HPUpDesc:
 	db   "Raises the HP of"
 	next "one #MON.@"
@@ -430,8 +431,9 @@ DireHitDesc:
 	db   "Ups critical hit"
 	next "ratio. (1 BTL)@"
 
-TeruSama3Desc:
-	db   "?@"
+AssaultVestDesc:
+	db   "Ups SPECIAL DEF."
+	next "Atk. only. (HOLD)@"
 
 FreshWaterDesc:
 	db   "Restores #MON"
@@ -449,8 +451,9 @@ XAttackDesc:
 	db   "Raises ATTACK."
 	next "(1 BTL)@"
 
-TeruSama4Desc:
-	db   "?@"
+LightClayDesc:
+	db   "Extends duration"
+	next "of screens. (HOLD)@"
 
 XDefendDesc:
 	db   "Raises DEFENSE."
@@ -605,8 +608,9 @@ SilverPowderDesc:
 BluApricornDesc:
 	db   "A blue APRICORN.@"
 
-TeruSama6Desc:
-	db   "?@"
+DampRockDesc:
+	db   "Extends duration"
+	next "of rain. (HOLD)@"
 
 AmuletCoinDesc:
 	db   "Doubles monetary"
@@ -641,8 +645,9 @@ BlkApricornDesc:
 	db   "A black APRICORN."
 	next "@"
 
-TeruSama7Desc:
-	db   "?@"
+HeatRockDesc:
+	db   "Extends duration"
+	next "of sun. (HOLD)@"
 
 PnkApricornDesc:
 	db   "A pink APRICORN."
@@ -720,8 +725,9 @@ FocusBandDesc:
 	db   "May prevent faint-"
 	next "ing. (HOLD)@"
 
-TeruSama8Desc:
-	db   "?@"
+IcyRockDesc:
+	db   "Extends duration"
+	next "of hail. (HOLD)@"
 
 EnergyPowderDesc:
 	db   "Restores #MON"

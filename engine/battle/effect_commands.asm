@@ -2567,6 +2567,113 @@ DittoMetalPowder:
 	rr c
 	ret
 
+UnevolvedEviolite:
+; get the defender's species
+	ld a, MON_SPECIES
+	call BattlePartyAttr
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [hl]
+	jr nz, .Unevolved
+	ld a, [wTempEnemyMonSpecies]
+
+.Unevolved:
+; check if the defender has any evolutions
+; hl := EvosAttacksPointers + (species - 1) * 2
+	dec a
+	push hl
+	push bc
+	ld c, a
+	ld b, 0
+	ld hl, EvosAttacksPointers
+	add hl, bc
+	add hl, bc
+; hl := the species' entry from EvosAttacksPointers
+	ld a, BANK(EvosAttacksPointers)
+	call GetFarHalfword
+; a := the first byte of the species' *EvosAttacks data
+	ld a, BANK("Evolutions and Attacks")
+	call GetFarByte
+; if a == 0, there are no evolutions, so don't boost stats
+	and a
+	pop bc
+	pop hl
+	ret z
+
+; check if the defender's item is Eviolite
+	push bc
+	call GetOpponentItem
+	ld a, b
+	cp HELD_EVIOLITE
+	pop bc
+	ret nz
+
+; boost the relevant defense stat in bc by 50%
+	ld a, c
+	srl a
+	add c
+	ld c, a
+	ret nc
+
+	srl b
+	ld a, b
+	and a
+	jr nz, .done
+	inc b
+.done
+	scf
+	rr c
+	ret
+
+AssaultVest:
+; check who's attacking
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemyatk
+
+; check if special attack was used
+	ld hl, wPlayerMoveStructPower + 1
+	ld a, [hl]
+	cp SPECIAL
+	jr nc, .special
+	ret
+	
+.enemyatk
+	ld hl, wEnemyMoveStructPower + 1
+	ld a, [hl]
+	cp SPECIAL
+	ret c
+	
+.special
+
+; check if the defender's item is Eviolite
+	push bc
+	call GetOpponentItem
+	ld a, b
+	cp HELD_ASSAULT_VEST
+	pop bc
+	ret nz
+
+; boost special defense stat in bc by 50%
+	ld a, c
+	srl a
+	add c
+	ld c, a
+	ret nc
+
+	srl b
+	ld a, b
+	and a
+	jr nz, .done
+	inc b
+.done
+	scf
+	rr c
+	ret
+
+
+
+
 BattleCommand_DamageStats:
 ; damagestats
 
@@ -2653,6 +2760,8 @@ PlayerAttackDamage:
 	ld a, [wBattleMonLevel]
 	ld e, a
 	call DittoMetalPowder
+	call UnevolvedEviolite
+	call AssaultVest
 
 	ld a, 1
 	and a
@@ -2892,6 +3001,8 @@ EnemyAttackDamage:
 	ld a, [wEnemyMonLevel]
 	ld e, a
 	call DittoMetalPowder
+	call UnevolvedEviolite
+	call AssaultVest
 
 	ld a, 1
 	and a
@@ -6318,7 +6429,16 @@ BattleCommand_Screen:
 	bit SCREENS_LIGHT_SCREEN, [hl]
 	jr nz, .failed
 	set SCREENS_LIGHT_SCREEN, [hl]
+	
+	push bc
+	call GetUserItem
+	ld a, b
+	cp HELD_LIGHT_CLAY
+	pop bc
+	ld a, 8
+	jr z, .eight1
 	ld a, 5
+.eight1
 	ld [bc], a
 	ld hl, LightScreenEffectText
 	jr .good
@@ -6331,7 +6451,15 @@ BattleCommand_Screen:
 	; LightScreenCount -> ReflectCount
 	inc bc
 
+	push bc
+	call GetUserItem
+	ld a, b
+	cp HELD_LIGHT_CLAY
+	pop bc
+	ld a, 8
+	jr z, .eight2
 	ld a, 5
+.eight2
 	ld [bc], a
 	ld hl, ReflectEffectText
 

@@ -2036,10 +2036,10 @@ MewtwoEvosAttacks:
 	db 0 ; no more evolutions
 	db 1, CONFUSION
 	db 1, DISABLE
-	db 11, BARRIER
-	db 22, SWIFT
-	db 33, PSYCH_UP
-	db 44, FUTURE_SIGHT
+	db 11, RAIN_DANCE
+	db 22, LIGHT_SCREEN
+	db 33, RECOVER
+	db 44, POUND
 	db 55, MIST
 	db 66, PSYCHIC_M
 	db 77, AMNESIA
