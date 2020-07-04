@@ -278,63 +278,17 @@ HandleBetweenTurnEffects:
 	call BattleRandom
 	cp 50 percent + 1
 	jp c, .enemy_first
+	
 .player_first
 	xor a
 	ld [wEnemyGoesFirst], a
-
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	call HandleWeather
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	call HandleFutureSight
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	
-	; + Handle Wish
-	call HandleLeftovers
-	; + Handle Hydration/Shed Skin + Leftovers/Black Sludge
-	
-	call HandleLeechSeed
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	
-	call HandlePSNBRN
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	
-	call HandleNightmare
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	
-	call HandleCurse
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	
-	call HandleWrap
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	
-	; Handle Taunt/Encore
-	
-	call HandleDisable
-	
-	; Handle Yawn
-	
-	call HandlePerishSong
-	; call CheckFaint_PlayerThenEnemy
-	; ret c
-	
-	; Handle Screens
-	; Handle Safeguard
-	; Handle Speed Boost/Moody/Bad Dreams + Flame Orb/Toxic Orb/Sticky Barb + Harvest
-	
-	jr .NoMoreFaintingConditions
+	jr .go
 
 .enemy_first
 	ld a, 1
 	ld [wEnemyGoesFirst], a
 	
+.go
 	; call CheckFaint_EnemyThenPlayer
 	; ret c
 	call HandleWeather
@@ -382,7 +336,7 @@ HandleBetweenTurnEffects:
 	; Handle Safeguard
 	; Handle Speed Boost/Moody/Bad Dreams + Flame Orb/Toxic Orb/Sticky Barb + Harvest
 
-.NoMoreFaintingConditions:
+; .NoMoreFaintingConditions:
 	; call HandleLeftovers
 	call HandleMysteryberry
 	call HandleDefrost
@@ -2538,11 +2492,11 @@ UpdateHPBar:
 
 HandleEnemyMonFaint:
 	call FaintEnemyPokemon
-ContinueHandleEnemyMonFaint:
 	ld hl, wBattleMonHP
 	ld a, [hli]
 	or [hl]
 	call z, FaintYourPokemon
+ContinueHandleEnemyMonFaint:
 	xor a
 	ld [wWhichMonFaintedFirst], a
 	call UpdateBattleStateAndExperienceAfterEnemyFaint
@@ -3196,11 +3150,11 @@ INCLUDE "data/trainers/leaders.asm"
 
 HandlePlayerMonFaint:
 	call FaintYourPokemon
-ContinueHandlePlayerMonFaint:
 	ld hl, wEnemyMonHP
 	ld a, [hli]
 	or [hl]
 	call z, FaintEnemyPokemon
+ContinueHandlePlayerMonFaint:
 	ld a, $1
 	ld [wWhichMonFaintedFirst], a
 	call UpdateFaintedPlayerMon
