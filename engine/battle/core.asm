@@ -339,7 +339,7 @@ HandleBetweenTurnEffects:
 ; .NoMoreFaintingConditions:
 	; call HandleLeftovers
 	call HandleMysteryberry
-	call HandleDefrost
+	; call HandleDefrost
 	call HandleScreens
 	call HandleSafeguard
 	call HandleStatBoostingHeldItems
@@ -1634,64 +1634,64 @@ HandleFutureSight:
 	call UpdateBattleMonInParty
 	jp UpdateEnemyMonInParty
 
-HandleDefrost:
-	ldh a, [hSerialConnectionStatus]
-	cp USING_EXTERNAL_CLOCK
-	jr z, .enemy_first
-	call .do_player_turn
-	jr .do_enemy_turn
+; HandleDefrost:
+	; ldh a, [hSerialConnectionStatus]
+	; cp USING_EXTERNAL_CLOCK
+	; jr z, .enemy_first
+	; call .do_player_turn
+	; jr .do_enemy_turn
 
-.enemy_first
-	call .do_enemy_turn
-.do_player_turn
-	ld a, [wBattleMonStatus]
-	bit FRZ, a
-	ret z
+; .enemy_first
+	; call .do_enemy_turn
+; .do_player_turn
+	; ld a, [wBattleMonStatus]
+	; bit FRZ, a
+	; ret z
 
-	ld a, [wPlayerJustGotFrozen]
-	and a
-	ret nz
+	; ld a, [wPlayerJustGotFrozen]
+	; and a
+	; ret nz
 
-	call BattleRandom
-	cp 10 percent
-	ret nc
-	xor a
-	ld [wBattleMonStatus], a
-	ld a, [wCurBattleMon]
-	ld hl, wPartyMon1Status
-	call GetPartyLocation
-	ld [hl], 0
-	call UpdateBattleHuds
-	call SetEnemyTurn
-	ld hl, DefrostedOpponentText
-	jp StdBattleTextbox
+	; call BattleRandom
+	; cp 10 percent
+	; ret nc
+	; xor a
+	; ld [wBattleMonStatus], a
+	; ld a, [wCurBattleMon]
+	; ld hl, wPartyMon1Status
+	; call GetPartyLocation
+	; ld [hl], 0
+	; call UpdateBattleHuds
+	; call SetEnemyTurn
+	; ld hl, DefrostedOpponentText
+	; jp StdBattleTextbox
 
-.do_enemy_turn
-	ld a, [wEnemyMonStatus]
-	bit FRZ, a
-	ret z
-	ld a, [wEnemyJustGotFrozen]
-	and a
-	ret nz
-	call BattleRandom
-	cp 10 percent
-	ret nc
-	xor a
-	ld [wEnemyMonStatus], a
+; .do_enemy_turn
+	; ld a, [wEnemyMonStatus]
+	; bit FRZ, a
+	; ret z
+	; ld a, [wEnemyJustGotFrozen]
+	; and a
+	; ret nz
+	; call BattleRandom
+	; cp 10 percent
+	; ret nc
+	; xor a
+	; ld [wEnemyMonStatus], a
 
-	ld a, [wBattleMode]
-	dec a
-	jr z, .wild
-	ld a, [wCurOTMon]
-	ld hl, wOTPartyMon1Status
-	call GetPartyLocation
-	ld [hl], 0
-.wild
+	; ld a, [wBattleMode]
+	; dec a
+	; jr z, .wild
+	; ld a, [wCurOTMon]
+	; ld hl, wOTPartyMon1Status
+	; call GetPartyLocation
+	; ld [hl], 0
+; .wild
 
-	call UpdateBattleHuds
-	call SetPlayerTurn
-	ld hl, DefrostedOpponentText
-	jp StdBattleTextbox
+	; call UpdateBattleHuds
+	; call SetPlayerTurn
+	; ld hl, DefrostedOpponentText
+	; jp StdBattleTextbox
 
 HandleSafeguard:
 	ldh a, [hSerialConnectionStatus]

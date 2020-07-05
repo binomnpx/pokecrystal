@@ -203,6 +203,28 @@ CheckPlayerTurn:
 	cp SACRED_FIRE
 	jr z, .not_frozen
 
+	call BattleRandom
+	cp 20 percent
+	jr nc, .frozen
+
+	xor a
+	ld [wBattleMonStatus], a
+	ld a, [wCurBattleMon]
+	ld hl, wPartyMon1Status
+	call GetPartyLocation
+	ld [hl], 0
+	call UpdateBattleHuds
+	call SetEnemyTurn
+	ld hl, DefrostedOpponentText
+	call StdBattleTextbox
+	call SetPlayerTurn
+	jr .not_frozen
+
+.frozen
+	call SetEnemyTurn
+	ld de, ANIM_FRZ
+	call PlayOpponentBattleAnim
+	call SetPlayerTurn
 	ld hl, FrozenSolidText
 	call StdBattleTextbox
 
@@ -430,6 +452,31 @@ CheckEnemyTurn:
 	cp SACRED_FIRE
 	jr z, .not_frozen
 
+	call BattleRandom
+	cp 20 percent
+	jr nc, .frozen
+
+	xor a
+	ld [wEnemyMonStatus], a
+	ld a, [wBattleMode]
+	dec a
+	jr z, .wild
+	ld a, [wCurOTMon]
+	ld hl, wOTPartyMon1Status
+	call GetPartyLocation
+	ld [hl], 0
+.wild
+	call UpdateBattleHuds
+	call SetPlayerTurn
+	ld hl, DefrostedOpponentText
+	call StdBattleTextbox
+	jr .not_frozen
+
+.frozen
+	call SetPlayerTurn
+	ld de, ANIM_FRZ
+	call PlayOpponentBattleAnim
+	call SetEnemyTurn
 	ld hl, FrozenSolidText
 	call StdBattleTextbox
 	call CantMove
