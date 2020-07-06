@@ -133,7 +133,7 @@ ItemNames::
 	db "STAR PIECE@"
 	db "BASEMENT KEY@"
 	db "PASS@"
-	db "TERU-SAMA@"
+	db "CHOICE BAND@"
 	db "TERU-SAMA@"
 	db "TERU-SAMA@"
 	db "CHARCOAL@"

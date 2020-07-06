@@ -2672,28 +2672,30 @@ UnevolvedEviolite:
 	rr c
 	ret
 
-AssaultVest:
+PhysOrSpec: ; nc mean special, c means physical
 ; check who's attacking
+	push hl
 	ldh a, [hBattleTurn]
 	and a
 	jr nz, .enemyatk
 
-; check if special attack was used
+; check if physical attack was used
 	ld hl, wPlayerMoveStructPower + 1
 	ld a, [hl]
 	cp SPECIAL
-	jr nc, .special
+	pop hl
 	ret
 	
 .enemyatk
 	ld hl, wEnemyMoveStructPower + 1
 	ld a, [hl]
 	cp SPECIAL
-	ret c
-	
-.special
+	pop hl
+	ret
 
-; check if the defender's item is Eviolite
+
+AssaultVest:
+; check if the defender's item is Assault Vest
 	push bc
 	call GetOpponentItem
 	ld a, b
@@ -2718,8 +2720,33 @@ AssaultVest:
 	rr c
 	ret
 
+ChoiceBand:
+; check if the user's item is Choice Band
+	push hl
+	push bc
+	call GetUserItem
+	ld a, b
+	cp HELD_CHOICE_BAND
+	pop bc
+	pop hl
+	ret nz
 
+; boost attack stat in hl by 50%
+	ld a, l
+	srl a
+	add l
+	ld l, a
+	ret nc
 
+	srl h
+	ld a, h
+	and a
+	jr nz, .done
+	inc h
+.done
+	scf
+	rr l
+	ret
 
 BattleCommand_DamageStats:
 ; damagestats
@@ -2800,6 +2827,8 @@ PlayerAttackDamage:
 .thickclub
 ; Note: Returns player attack at hl in hl.
 	call ThickClubBoost
+	call PhysOrSpec
+	call c, ChoiceBand
 
 .done
 	call TruncateHL_BC
@@ -2808,7 +2837,8 @@ PlayerAttackDamage:
 	ld e, a
 	call DittoMetalPowder
 	call UnevolvedEviolite
-	call AssaultVest
+	call PhysOrSpec
+	call nc, AssaultVest
 
 	ld a, 1
 	and a
@@ -3041,6 +3071,8 @@ EnemyAttackDamage:
 
 .thickclub
 	call ThickClubBoost
+	call PhysOrSpec
+	call c, ChoiceBand
 
 .done
 	call TruncateHL_BC
@@ -3049,7 +3081,8 @@ EnemyAttackDamage:
 	ld e, a
 	call DittoMetalPowder
 	call UnevolvedEviolite
-	call AssaultVest
+	call PhysOrSpec
+	call nc, AssaultVest
 
 	ld a, 1
 	and a
