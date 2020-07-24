@@ -69,10 +69,14 @@ DoMove:
 
 .ReadMoveEffectCommand:
 ; ld a, [wBattleScriptBufferAddress++]
-	ld a, [wBattleScriptBufferAddress]
+	; ld a, [wBattleScriptBufferAddress]
+	; ld l, a
+	; ld a, [wBattleScriptBufferAddress + 1]
+	; ld h, a
+	ld hl, wBattleScriptBufferAddress
+	ld a, [hli]
+	ld h, [hl]
 	ld l, a
-	ld a, [wBattleScriptBufferAddress + 1]
-	ld h, a
 
 	ld a, [hli]
 
@@ -867,8 +871,9 @@ BattleCommand_CheckObedience:
 
 	ld hl, wBattleMonPP
 	ld de, wBattleMonMoves
-	ld b, 0
-	ld c, NUM_MOVES
+	; ld b, 0
+	; ld c, NUM_MOVES
+	lb bc, 0, NUM_MOVES
 
 .GetTotalPP:
 	ld a, [hli]
@@ -1105,8 +1110,7 @@ BattleCommand_DoTurn:
 
 .mimic
 	ld hl, wWildMonPP
-	call .consume_pp
-	ret
+	jr .consume_pp
 
 .out_of_pp
 	call BattleCommand_MoveDelay
@@ -1318,9 +1322,10 @@ BattleCommand_Stab:
 	cp b
 	jr z, .stab
 	cp c
-	jr z, .stab
+	; jr z, .stab
 
-	jr .SkipStab
+	; jr .SkipStab
+	jr nz, .SkipStab
 
 .stab
 	ld hl, wCurDamage + 1
@@ -1372,8 +1377,9 @@ BattleCommand_Stab:
 	cp d
 	jr z, .GotMatchup
 	cp e
-	jr z, .GotMatchup
-	jr .SkipType
+	; jr z, .GotMatchup
+	; jr .SkipType
+	jr nz, .SkipType
 
 .GotMatchup:
 	push hl
@@ -1667,13 +1673,14 @@ BattleCommand_CheckHit:
 .skip_brightpowder
 	ld a, b
 	cp -1
-	jr z, .Hit
+	; jr z, .Hit
+	ret z
 
 	call BattleRandom
 	cp b
 	jr nc, .Miss
 
-.Hit:
+; .Hit:
 	ret
 
 .Miss:
@@ -2167,8 +2174,9 @@ BattleCommand_FailureText:
 	cp EFFECT_DOUBLE_HIT
 	jr z, .multihit
 	cp EFFECT_POISON_MULTI_HIT
-	jr z, .multihit
-	jp EndMoveEffect
+	; jr z, .multihit
+	; jp EndMoveEffect
+	jp nz, EndMoveEffect
 
 .multihit
 	call BattleCommand_RaiseSub
@@ -2511,9 +2519,9 @@ BattleCommand_CheckFaint:
 BattleCommand_BuildOpponentRage:
 ; buildopponentrage
 
-	jp .start
+	; jp .start
 
-.start
+; .start
 	ld a, [wAttackMissed]
 	and a
 	ret nz
@@ -2568,10 +2576,14 @@ BattleCommand_RageDamage:
 	ret
 
 EndMoveEffect:
-	ld a, [wBattleScriptBufferAddress]
+	; ld a, [wBattleScriptBufferAddress]
+	; ld l, a
+	; ld a, [wBattleScriptBufferAddress + 1]
+	; ld h, a
+	ld hl, wBattleScriptBufferAddress
+	ld a, [hli]
+	ld h, [hl]
 	ld l, a
-	ld a, [wBattleScriptBufferAddress + 1]
-	ld h, a
 	ld a, $ff
 	ld [hli], a
 	ld [hli], a
@@ -2942,8 +2954,9 @@ ThickClubBoost:
 ; it's holding a Thick Club, double it.
 	push bc
 	push de
-	ld b, CUBONE
-	ld c, MAROWAK
+	; ld b, CUBONE
+	; ld c, MAROWAK
+	lb bc, CUBONE, MAROWAK
 	ld d, THICK_CLUB
 	call SpeciesItemBoost
 	pop de
@@ -2957,8 +2970,9 @@ LightBallBoost:
 ; holding a Light Ball, double it.
 	push bc
 	push de
-	ld b, PIKACHU
-	ld c, PIKACHU
+	; ld b, PIKACHU
+	; ld c, PIKACHU
+	lb bc, PIKACHU, PIKACHU
 	ld d, LIGHT_BALL
 	call SpeciesItemBoost
 	pop de
@@ -3001,8 +3015,9 @@ SpeciesItemBoost:
 	ret nz
 
 ; Double the stat
-	sla l
-	rl h
+	; sla l
+	; rl h
+	add hl, hl
 	ret
 
 EnemyAttackDamage:
@@ -3352,7 +3367,7 @@ BattleCommand_DamageCalc:
 	ldh [hProduct + 3], a
 
 	ldh a, [hQuotient + 2]
-	rl a
+	rla
 	ldh [hProduct + 2], a
 
 ; Cap at $ffff.
@@ -3426,7 +3441,7 @@ BattleCommand_ConstantDamage:
 	srl a
 	ld b, a
 	ld a, [hl]
-	rr a
+	rra
 	push af
 	ld a, b
 	pop bc
@@ -3436,7 +3451,7 @@ BattleCommand_ConstantDamage:
 	ld a, 0
 	jr nz, .got_power
 	ld b, 1
-	jr .got_power
+	; jr .got_power
 
 .got_power
 	ld hl, wCurDamage
@@ -3471,17 +3486,17 @@ BattleCommand_ConstantDamage:
 
 	ldh a, [hProduct + 4]
 	srl b
-	rr a
+	rra
 	srl b
-	rr a
+	rra
 	ldh [hDivisor], a
 	ldh a, [hProduct + 2]
 	ld b, a
 	srl b
 	ldh a, [hProduct + 3]
-	rr a
+	rra
 	srl b
-	rr a
+	rra
 	ldh [hDividend + 3], a
 	ld a, b
 	ldh [hDividend + 2], a
@@ -4111,7 +4126,7 @@ SapHealth:
 	ldh [hDividend], a
 	ld b, a
 	ld a, [hl]
-	rr a
+	rra
 	ldh [hDividend + 1], a
 	or b
 	jr nz, .at_least_one
@@ -4419,7 +4434,7 @@ BattleCommand_AccuracyUp2:
 BattleCommand_EvasionUp2:
 ; evasionup2
 	ld b, $10 | EVASION
-	jr BattleCommand_StatUp
+	; jr BattleCommand_StatUp
 
 BattleCommand_StatUp:
 ; statup
@@ -4481,11 +4496,16 @@ RaiseStat:
 	ld b, 0
 	add hl, bc
 	ld a, c
+	; add e
+	; ld e, a
+	; jr nc, .no_carry
+	; inc d
+; .no_carry
 	add e
 	ld e, a
-	jr nc, .no_carry
-	inc d
-.no_carry
+	adc d
+	sub e
+	ld d, a
 	pop bc
 	ld a, [hld]
 	sub LOW(MAX_STAT_VALUE)
@@ -4839,11 +4859,16 @@ TryLowerStat:
 	add hl, bc
 	; add de, c
 	ld a, c
+	; add e
+	; ld e, a
+	; jr nc, .no_carry
+	; inc d
+; .no_carry
 	add e
 	ld e, a
-	jr nc, .no_carry
-	inc d
-.no_carry
+	adc d
+	sub e
+	ld d, a
 	pop bc
 
 ; The lowest possible stat is 1.
@@ -5377,7 +5402,8 @@ BattleCommand_ForceSwitch:
 .force_player_switch
 	ld a, [wAttackMissed]
 	and a
-	jr nz, .player_miss
+	; jr nz, .player_miss
+	jp nz, .fail
 
 	ld a, [wBattleMode]
 	dec a
@@ -5402,8 +5428,8 @@ BattleCommand_ForceSwitch:
 	cp b
 	jr nc, .wild_succeed_playeristarget
 
-.player_miss
-	jr .fail
+; .player_miss
+	; jr .fail
 
 .wild_succeed_playeristarget
 	call UpdateBattleMonInParty
@@ -5639,9 +5665,13 @@ BattleCommand_EndLoop:
 	ret
 
 .loop_back_to_critical
-	ld a, [wBattleScriptBufferAddress + 1]
-	ld h, a
-	ld a, [wBattleScriptBufferAddress]
+	; ld a, [wBattleScriptBufferAddress + 1]
+	; ld h, a
+	; ld a, [wBattleScriptBufferAddress]
+	; ld l, a
+	ld hl, wBattleScriptBufferAddress
+	ld a, [hli]
+	ld h, [hl]
 	ld l, a
 .not_critical
 	ld a, [hld]
@@ -5884,28 +5914,33 @@ BattleCommand_Charge:
 	call GetBattleVar
 	cp RAZOR_WIND
 	ld hl, .BattleMadeWhirlwindText
-	jr z, .done
+	; jr z, .done
+	ret z
 
 	cp SOLARBEAM
 	ld hl, .BattleTookSunlightText
-	jr z, .done
+	; jr z, .done
+	ret z
 
 	cp SKULL_BASH
 	ld hl, .BattleLoweredHeadText
-	jr z, .done
+	; jr z, .done
+	ret z
 
 	cp SKY_ATTACK
 	ld hl, .BattleGlowingText
-	jr z, .done
+	; jr z, .done
+	ret z
 
 	cp FLY
 	ld hl, .BattleFlewText
-	jr z, .done
+	; jr z, .done
+	ret z
 
 	cp DIG
 	ld hl, .BattleDugText
 
-.done
+; .done
 	ret
 
 .BattleMadeWhirlwindText:
@@ -6320,12 +6355,13 @@ DoubleDamage:
 	sla [hl]
 	dec hl
 	rl [hl]
-	jr nc, .quit
+	; jr nc, .quit
+	ret nc
 
 	ld a, $ff
 	ld [hli], a
 	ld [hl], a
-.quit
+; .quit
 	ret
 
 INCLUDE "engine/battle/move_effects/mimic.asm"
@@ -6995,7 +7031,7 @@ GetOpponentItem:
 	ld hl, wBattleMonItem
 .go
 	ld b, [hl]
-	jp GetItemHeldEffect
+	; jp GetItemHeldEffect
 
 GetItemHeldEffect:
 ; Return the effect of item b in bc.
@@ -7147,9 +7183,13 @@ BattleCommand_ClearText:
 
 SkipToBattleCommand:
 ; Skip over commands until reaching command b.
-	ld a, [wBattleScriptBufferAddress + 1]
-	ld h, a
-	ld a, [wBattleScriptBufferAddress]
+	; ld a, [wBattleScriptBufferAddress + 1]
+	; ld h, a
+	; ld a, [wBattleScriptBufferAddress]
+	; ld l, a
+	ld hl, wBattleScriptBufferAddress
+	ld a, [hli]
+	ld h, [hl]
 	ld l, a
 .loop
 	ld a, [hli]
