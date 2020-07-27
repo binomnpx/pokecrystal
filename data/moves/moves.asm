@@ -251,8 +251,8 @@ Moves:
 	move HIDDEN_POWER, EFFECT_HIDDEN_POWER,        1, NORMAL,   SPECIAL,  100, 15,   0
 	move CROSS_CHOP,   EFFECT_NORMAL_HIT,        100, FIGHTING, PHYSICAL,  80,  5,   0
 	move TWISTER,      EFFECT_TWISTER,            40, DRAGON,   SPECIAL,  100, 20,  20
-	move RAIN_DANCE,   EFFECT_RAIN_DANCE,          0, WATER,    STATUS,    90,  5,   0
-	move SUNNY_DAY,    EFFECT_SUNNY_DAY,           0, FIRE,     STATUS,    90,  5,   0
+	move RAIN_DANCE,   EFFECT_RAIN_DANCE,          0, WATER,    STATUS,   100,  5,   0
+	move SUNNY_DAY,    EFFECT_SUNNY_DAY,           0, FIRE,     STATUS,   100,  5,   0
 	move CRUNCH,       EFFECT_SP_DEF_DOWN_HIT,    80, DARK,     PHYSICAL, 100, 15,  20
 	move MIRROR_COAT,  EFFECT_MIRROR_COAT,         1, PSYCHIC,  SPECIAL,  100, 20,   0
 	move PSYCH_UP,     EFFECT_PSYCH_UP,            0, NORMAL,   STATUS,   100, 10,   0
@@ -264,4 +264,5 @@ Moves:
 	move WHIRLPOOL,    EFFECT_TRAP_TARGET,        15, WATER,    SPECIAL,   70, 15,   0
 	move BEAT_UP,      EFFECT_BEAT_UP,            10, DARK,     PHYSICAL, 100, 10,   0
 	move HAIL,		   EFFECT_HAIL,				   0, ICE, 		STATUS,   100, 10,   0
+	move DRAGON_RUSH,  EFFECT_FLINCH_HIT,		 100, DRAGON,	PHYSICAL,  75, 10,  20
 

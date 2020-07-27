@@ -258,10 +258,11 @@
 	const WHIRLPOOL    ; fa
 	const BEAT_UP      ; fb
 	const HAIL		   ; fc
+	const DRAGON_RUSH  ; fd
 NUM_ATTACKS EQU const_value + -1
 
 	; const MOVE_OR_ANIM_FC ; fc
-	const MOVE_OR_ANIM_FD ; fd
+	; const MOVE_OR_ANIM_FD ; fd
 	const MOVE_OR_ANIM_FE ; fe
 
 ; Battle animations use the same constants as the moves up to this point

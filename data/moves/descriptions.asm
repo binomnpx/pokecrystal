@@ -252,12 +252,11 @@ MoveDescriptions::
 	dw WhirlpoolDescription
 	dw BeatUpDescription
 	dw HailDescription
-	dw MoveFDDescription
+	dw DragonRushDescription
 	dw MoveFEDescription
 	dw MoveFFDescription
 	dw Move00Description
 
-MoveFDDescription:
 MoveFEDescription:
 MoveFFDescription:
 Move00Description:
@@ -1270,3 +1269,7 @@ BeatUpDescription:
 HailDescription:
 	db   "Inflicts damage"
 	next "every turn.@"
+
+DragonRushDescription:
+	db   "An attack that may"
+	next "cause flinching.@"

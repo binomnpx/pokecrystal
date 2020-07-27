@@ -253,7 +253,7 @@ BattleAnimations::
 	dw BattleAnim_Whirlpool
 	dw BattleAnim_BeatUp
 	dw BattleAnim_Hail
-	dw BattleAnim_253
+	dw BattleAnim_DragonRush
 	dw BattleAnim_254
 	dw BattleAnim_SweetScent2
 ; $100
@@ -282,7 +282,6 @@ BattleAnimations::
 	dw BattleAnim_InHail
 
 BattleAnim_0:
-BattleAnim_253:
 BattleAnim_254:
 BattleAnim_MirrorMove:
 	anim_ret
@@ -4851,5 +4850,32 @@ BattleAnim_Hail:
 	anim_wait 8
 	anim_ret
 
-
-
+BattleAnim_DragonRush:
+	anim_3gfx ANIM_GFX_SPEED, ANIM_GFX_ROCKS, ANIM_GFX_HIT
+	anim_bgeffect ANIM_BG_06, $0, $1, $0
+	anim_bgeffect ANIM_BG_HIDE_MON, $0, $1, $0
+	anim_call BattleAnimSub_WarpAway
+	anim_wait 64
+	anim_bgeffect ANIM_BG_HIDE_MON, $0, $1, $0
+	anim_sound 0, 1, SFX_SPARK
+	anim_obj ANIM_OBJ_01, 128, 56, $0
+	anim_sound 0, 1, SFX_SPARK
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $28
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $5c
+	anim_sound 0, 1, SFX_SPARK
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $10
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $e8
+	anim_sound 0, 1, SFX_SPARK
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $9c
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $d0
+	anim_wait 6
+	anim_sound 0, 1, SFX_SPARK
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $1c
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $50
+	anim_sound 0, 1, SFX_SPARK
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $dc
+	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $90
+	anim_wait 32
+	anim_bgeffect ANIM_BG_SHOW_MON, $0, $1, $0
+	anim_wait 16
+	anim_ret

@@ -2768,6 +2768,7 @@ DunsparceEvosAttacks:
 	db 18, SPITE
 	db 26, PURSUIT
 	db 30, SCREECH
+	db 31, DRAGON_RUSH
 	db 38, TAKE_DOWN
 	db 0 ; no more level-up moves
 
