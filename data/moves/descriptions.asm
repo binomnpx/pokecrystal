@@ -253,11 +253,10 @@ MoveDescriptions::
 	dw BeatUpDescription
 	dw HailDescription
 	dw DragonRushDescription
-	dw MoveFEDescription
+	dw WillOWispDescription
 	dw MoveFFDescription
 	dw Move00Description
 
-MoveFEDescription:
 MoveFFDescription:
 Move00Description:
 	db "?@"
@@ -1273,3 +1272,8 @@ HailDescription:
 DragonRushDescription:
 	db   "An attack that may"
 	next "cause flinching.@"
+
+WillOWispDescription:
+	db   "A move that may"
+	next "burn the foe.@"
+	

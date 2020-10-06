@@ -254,7 +254,7 @@ BattleAnimations::
 	dw BattleAnim_BeatUp
 	dw BattleAnim_Hail
 	dw BattleAnim_DragonRush
-	dw BattleAnim_254
+	dw BattleAnim_WillOWisp
 	dw BattleAnim_SweetScent2
 ; $100
 	dw BattleAnim_ThrowPokeBall
@@ -282,7 +282,6 @@ BattleAnimations::
 	dw BattleAnim_InHail
 
 BattleAnim_0:
-BattleAnim_254:
 BattleAnim_MirrorMove:
 	anim_ret
 
@@ -4875,7 +4874,41 @@ BattleAnim_DragonRush:
 	anim_sound 0, 1, SFX_SPARK
 	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $dc
 	anim_obj ANIM_OBJ_ROCK_SMASH, 128, 64, $90
-	anim_wait 32
+	anim_wait 16
 	anim_bgeffect ANIM_BG_SHOW_MON, $0, $1, $0
 	anim_wait 16
 	anim_ret
+
+BattleAnim_WillOWisp:
+	anim_1gfx ANIM_GFX_FIRE
+	anim_bgp $1b
+	anim_wait 32
+.loop
+	anim_sound 6, 2, SFX_EMBER
+	anim_obj ANIM_OBJ_WISP, 64, 80, $2
+	anim_wait 8
+	anim_sound 6, 2, SFX_EMBER
+	anim_obj ANIM_OBJ_WISP, 64, 88, $3
+	anim_wait 8
+	anim_sound 6, 2, SFX_EMBER
+	anim_obj ANIM_OBJ_WISP, 64, 96, $4
+	anim_wait 8
+	anim_loop 3, .loop
+	anim_wait 32
+	anim_ret
+
+	; anim_1gfx ANIM_GFX_FIRE
+	; anim_bgp $1b
+	; anim_wait 32
+	; anim_sound 32, 2, SFX_EMBER
+	; anim_obj ANIM_OBJ_WISP, 64, 92, $30
+	; anim_wait 6
+	; anim_sound 32, 2, SFX_EMBER
+	; anim_obj ANIM_OBJ_WISP, 64, 92, $30
+	; anim_wait 6
+	; anim_sound 32, 2, SFX_EMBER
+	; anim_obj ANIM_OBJ_WISP, 64, 92, $30
+	; anim_wait 128
+	; anim_wait 32
+	; anim_ret
+

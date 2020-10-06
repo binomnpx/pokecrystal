@@ -182,6 +182,7 @@ ENDM
 	command curl                    ; af
 	command starthail				; b0
 	command failifoppfainted		; b1
+	command burn
 
 	enum_start $fe
 	command endturn                 ; fe

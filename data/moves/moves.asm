@@ -265,4 +265,5 @@ Moves:
 	move BEAT_UP,      EFFECT_BEAT_UP,            10, DARK,     PHYSICAL, 100, 10,   0
 	move HAIL,		   EFFECT_HAIL,				   0, ICE, 		STATUS,   100, 10,   0
 	move DRAGON_RUSH,  EFFECT_FLINCH_HIT,		 100, DRAGON,	PHYSICAL,  75, 10,  20
+	move WILL_O_WISP,  EFFECT_BURN,				   0, FIRE, 	STATUS,	   85, 15,	 0
 

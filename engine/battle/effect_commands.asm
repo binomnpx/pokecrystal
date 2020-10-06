@@ -474,6 +474,7 @@ CheckEnemyTurn:
 	call SetPlayerTurn
 	ld hl, DefrostedOpponentText
 	call StdBattleTextbox
+	call SetEnemyTurn
 	jr .not_frozen
 
 .frozen
@@ -3837,18 +3838,6 @@ UpdateMoveData:
 BattleCommand_SleepTarget:
 ; sleeptarget
 
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_SLEEP
-	jr nz, .not_protected_by_item
-
-	ld a, [hl]
-	ld [wNamedObjectIndexBuffer], a
-	call GetItemName
-	ld hl, ProtectedByText
-	jr .fail
-
-.not_protected_by_item
 	ld a, BATTLE_VARS_STATUS_OPP
 	call GetBattleVarAddr
 	ld d, h
@@ -3947,10 +3936,6 @@ BattleCommand_PoisonTarget:
 	ret z
 	call CheckIfTargetIsPoisonType
 	ret z
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_POISON
-	ret z
 	ld a, [wEffectFailed]
 	and a
 	ret nz
@@ -3986,17 +3971,6 @@ BattleCommand_Poison:
 	and 1 << PSN
 	jp nz, .failed
 
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_POISON
-	jr nz, .do_poison
-	ld a, [hl]
-	ld [wNamedObjectIndexBuffer], a
-	call GetItemName
-	ld hl, ProtectedByText
-	jr .failed
-
-.do_poison
 	ld hl, DidntAffect1Text
 	ld a, BATTLE_VARS_STATUS_OPP
 	call GetBattleVar
@@ -4227,10 +4201,6 @@ BattleCommand_BurnTarget:
 	ret z
 	call CheckMoveTypeMatchesTarget ; Don't burn a Fire-type
 	ret z
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_BURN
-	ret z
 	ld a, [wEffectFailed]
 	and a
 	ret nz
@@ -4296,10 +4266,6 @@ BattleCommand_FreezeTarget:
 	ret z
 	call CheckMoveTypeMatchesTarget ; Don't freeze an Ice-type
 	ret z
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_FREEZE
-	ret z
 	ld a, [wEffectFailed]
 	and a
 	ret nz
@@ -4343,10 +4309,6 @@ BattleCommand_ParalyzeTarget:
 	ret nz
 	ld a, [wTypeModifier]
 	and $7f
-	ret z
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_PARALYZE
 	ret z
 	ld a, [wEffectFailed]
 	and a
@@ -6098,10 +6060,6 @@ BattleCommand_Recoil:
 BattleCommand_ConfuseTarget:
 ; confusetarget
 
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_CONFUSE
-	ret z
 	ld a, [wEffectFailed]
 	and a
 	ret nz
@@ -6118,18 +6076,6 @@ BattleCommand_ConfuseTarget:
 BattleCommand_Confuse:
 ; confuse
 
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_CONFUSE
-	jr nz, .no_item_protection
-	ld a, [hl]
-	ld [wNamedObjectIndexBuffer], a
-	call GetItemName
-	call AnimateFailedMove
-	ld hl, ProtectedByText
-	jp StdBattleTextbox
-
-.no_item_protection
 	ld a, BATTLE_VARS_SUBSTATUS3_OPP
 	call GetBattleVarAddr
 	bit SUBSTATUS_CONFUSED, [hl]
@@ -6208,18 +6154,7 @@ BattleCommand_Paralyze:
 	ld a, [wTypeModifier]
 	and $7f
 	jr z, .didnt_affect
-	call GetOpponentItem
-	ld a, b
-	cp HELD_PREVENT_PARALYZE
-	jr nz, .no_item_protection
-	ld a, [hl]
-	ld [wNamedObjectIndexBuffer], a
-	call GetItemName
-	call AnimateFailedMove
-	ld hl, ProtectedByText
-	jp StdBattleTextbox
 
-.no_item_protection
 	; ldh a, [hBattleTurn]
 	; and a
 	; jr z, .dont_sample_failure
@@ -6269,6 +6204,69 @@ BattleCommand_Paralyze:
 .paralyzed
 	call AnimateFailedMove
 	ld hl, AlreadyParalyzedText
+	jp StdBattleTextbox
+
+.failed
+	jp PrintDidntAffect2
+
+.didnt_affect
+	call AnimateFailedMove
+	jp PrintDoesntAffect
+
+BattleCommand_Burn:
+; burn
+
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVar
+	bit BRN, a
+	jr nz, .burned
+	ld a, [wTypeModifier]
+	and $7f
+	jr z, .didnt_affect
+	
+	ld de, wEnemyMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .ok
+	ld de, wBattleMonType1
+.ok
+	ld a, [de]
+	inc de
+	cp FIRE
+	jr z, .didnt_affect
+	ld a, [de]
+	cp FIRE
+	jr z, .didnt_affect
+
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVarAddr
+	and a
+	jr nz, .failed
+	ld a, [wAttackMissed]
+	and a
+	jr nz, .failed
+	call CheckSubstituteOpp
+	jr nz, .failed
+	ld c, 30
+	call DelayFrames
+	call AnimateCurrentMove
+	ld a, $1
+	ldh [hBGMapMode], a
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVarAddr
+	set BRN, [hl]
+	call UpdateOpponentInParty
+	ld hl, ApplyBrnEffectOnAttack
+	call CallBattleCore
+	call UpdateBattleHuds
+	ld hl, BurnedText
+	call StdBattleTextbox
+	ld hl, UseHeldStatusHealingItem
+	jp CallBattleCore
+
+.burned
+	call AnimateFailedMove
+	ld hl, AlreadyBurnedText
 	jp StdBattleTextbox
 
 .failed

@@ -181,3 +181,4 @@ BattleCommandPointers:
 	dw BattleCommand_Curl
 	dw BattleCommand_StartHail
 	dw BattleCommand_FailIfOppFainted
+	dw BattleCommand_Burn

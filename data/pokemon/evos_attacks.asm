@@ -2766,10 +2766,10 @@ DunsparceEvosAttacks:
 	db 5, DEFENSE_CURL
 	db 13, GLARE
 	db 18, SPITE
-	db 26, PURSUIT
-	db 30, SCREECH
+	db 26, ICE_BEAM
+	db 30, NIGHT_SHADE
 	db 31, DRAGON_RUSH
-	db 38, TAKE_DOWN
+	db 38, WILL_O_WISP
 	db 0 ; no more level-up moves
 
 GligarEvosAttacks:

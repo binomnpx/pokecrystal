@@ -252,3 +252,4 @@ MoveNames::
 	db "BEAT UP@"
 	db "HAIL@"
 	db "DRAGON RUSH@"
+	db "WILL-O-WISP@"
