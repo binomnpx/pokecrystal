@@ -1,0 +1,1 @@
+the bank for this stuff is located in data/maps/scripts.asm

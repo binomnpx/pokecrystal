@@ -2627,64 +2627,6 @@ DittoMetalPowder:
 	rr c
 	ret
 
-UnevolvedEviolite:
-; get the defender's species
-	ld a, MON_SPECIES
-	call BattlePartyAttr
-	ldh a, [hBattleTurn]
-	and a
-	ld a, [hl]
-	jr nz, .Unevolved
-	ld a, [wTempEnemyMonSpecies]
-
-.Unevolved:
-; check if the defender has any evolutions
-; hl := EvosAttacksPointers + (species - 1) * 2
-	dec a
-	push hl
-	push bc
-	ld c, a
-	ld b, 0
-	ld hl, EvosAttacksPointers
-	add hl, bc
-	add hl, bc
-; hl := the species' entry from EvosAttacksPointers
-	ld a, BANK(EvosAttacksPointers)
-	call GetFarHalfword
-; a := the first byte of the species' *EvosAttacks data
-	ld a, BANK("Evolutions and Attacks")
-	call GetFarByte
-; if a == 0, there are no evolutions, so don't boost stats
-	and a
-	pop bc
-	pop hl
-	ret z
-
-; check if the defender's item is Eviolite
-	push bc
-	call GetOpponentItem
-	ld a, b
-	cp HELD_EVIOLITE
-	pop bc
-	ret nz
-
-; boost the relevant defense stat in bc by 50%
-	ld a, c
-	srl a
-	add c
-	ld c, a
-	ret nc
-
-	srl b
-	ld a, b
-	and a
-	jr nz, .done
-	inc b
-.done
-	scf
-	rr c
-	ret
-
 PhysOrSpec: ; nc mean special, c means physical
 ; check who's attacking
 	push hl
@@ -2706,60 +2648,6 @@ PhysOrSpec: ; nc mean special, c means physical
 	pop hl
 	ret
 
-
-AssaultVest:
-; check if the defender's item is Assault Vest
-	push bc
-	call GetOpponentItem
-	ld a, b
-	cp HELD_ASSAULT_VEST
-	pop bc
-	ret nz
-
-; boost special defense stat in bc by 50%
-	ld a, c
-	srl a
-	add c
-	ld c, a
-	ret nc
-
-	srl b
-	ld a, b
-	and a
-	jr nz, .done
-	inc b
-.done
-	scf
-	rr c
-	ret
-
-ChoiceBand:
-; check if the user's item is Choice Band
-	push hl
-	push bc
-	call GetUserItem
-	ld a, b
-	cp HELD_CHOICE_BAND
-	pop bc
-	pop hl
-	ret nz
-
-; boost attack stat in hl by 50%
-	ld a, l
-	srl a
-	add l
-	ld l, a
-	ret nc
-
-	srl h
-	ld a, h
-	and a
-	jr nz, .done
-	inc h
-.done
-	scf
-	rr l
-	ret
 
 BattleCommand_DamageStats:
 ; damagestats
@@ -2841,7 +2729,9 @@ PlayerAttackDamage:
 ; Note: Returns player attack at hl in hl.
 	call ThickClubBoost
 	call PhysOrSpec
-	call c, ChoiceBand
+	jr nc, .noCB
+	farcall ChoiceBand
+.noCB
 
 .done
 	call TruncateHL_BC
@@ -2849,9 +2739,11 @@ PlayerAttackDamage:
 	ld a, [wBattleMonLevel]
 	ld e, a
 	call DittoMetalPowder
-	call UnevolvedEviolite
+	farcall UnevolvedEviolite
 	call PhysOrSpec
-	call nc, AssaultVest
+	jr c, .noAV
+	farcall AssaultVest
+.noAV
 
 	ld a, 1
 	and a
@@ -3088,7 +2980,9 @@ EnemyAttackDamage:
 .thickclub
 	call ThickClubBoost
 	call PhysOrSpec
-	call c, ChoiceBand
+	jr nc, .noCB
+	farcall ChoiceBand
+.noCB
 
 .done
 	call TruncateHL_BC
@@ -3096,9 +2990,11 @@ EnemyAttackDamage:
 	ld a, [wEnemyMonLevel]
 	ld e, a
 	call DittoMetalPowder
-	call UnevolvedEviolite
+	farcall UnevolvedEviolite
 	call PhysOrSpec
-	call nc, AssaultVest
+	jr c, .noAV
+	farcall AssaultVest
+.noAV
 
 	ld a, 1
 	and a
@@ -6544,15 +6440,7 @@ BattleCommand_Screen:
 	jr nz, .failed
 	set SCREENS_LIGHT_SCREEN, [hl]
 	
-	push bc
-	call GetUserItem
-	ld a, b
-	cp HELD_LIGHT_CLAY
-	pop bc
-	ld a, 8
-	jr z, .eight1
-	ld a, 5
-.eight1
+	farcall LightClay; set a to 8 if Light Clay is held, otherwise set a to 5
 	ld [bc], a
 	ld hl, LightScreenEffectText
 	jr .good
@@ -6565,15 +6453,7 @@ BattleCommand_Screen:
 	; LightScreenCount -> ReflectCount
 	inc bc
 
-	push bc
-	call GetUserItem
-	ld a, b
-	cp HELD_LIGHT_CLAY
-	pop bc
-	ld a, 8
-	jr z, .eight2
-	ld a, 5
-.eight2
+	farcall LightClay; set a to 8 if Light Clay is held, otherwise sets a to 5
 	ld [bc], a
 	ld hl, ReflectEffectText
 
@@ -7009,7 +6889,7 @@ BattleCommand_FailIfOppFainted:
 	jp EndMoveEffect
 
 
-GetUserItem:
+GetUserItem::
 ; Return the effect of the user's item in bc, and its id at hl.
 	ld hl, wBattleMonItem
 	ldh a, [hBattleTurn]
@@ -7020,7 +6900,7 @@ GetUserItem:
 	ld b, [hl]
 	jp GetItemHeldEffect
 
-GetOpponentItem:
+GetOpponentItem::
 ; Return the effect of the opponent's item in bc, and its id at hl.
 	ld hl, wEnemyMonItem
 	ldh a, [hBattleTurn]

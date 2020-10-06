@@ -1,4 +1,4 @@
-SECTION "Formerly: Map Scripts 1, Now: All Mine!", ROMX
+; SECTION "Map Scripts 1", ROMX
 
 ; INCLUDE "maps/GoldenrodGym.asm"
 ; INCLUDE "maps/GoldenrodBikeShop.asm"
@@ -17,6 +17,10 @@ SECTION "Formerly: Map Scripts 1, Now: All Mine!", ROMX
 ; INCLUDE "maps/GoldenrodDeptStoreElevator.asm"
 ; INCLUDE "maps/GoldenrodDeptStoreRoof.asm"
 ; INCLUDE "maps/GoldenrodGameCorner.asm"
+
+SECTION "Formerly: Map Scripts 1, Now: All Mine!", ROMX
+
+INCLUDE "engine/battle/new_items_moves_and_abilities/new_held_item_effects.asm"
 
 
 SECTION "Map Scripts 2", ROMX
