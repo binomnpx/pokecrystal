@@ -532,23 +532,23 @@ ENDM
 	map_attributes Route35NationalParkGate, ROUTE_35_NATIONAL_PARK_GATE, $00, 0
 	map_attributes Route36RuinsOfAlphGate, ROUTE_36_RUINS_OF_ALPH_GATE, $00, 0
 	map_attributes Route36NationalParkGate, ROUTE_36_NATIONAL_PARK_GATE, $00, 0
-	map_attributes GoldenrodGym, GOLDENROD_GYM, $00, 0
-	map_attributes GoldenrodBikeShop, GOLDENROD_BIKE_SHOP, $00, 0
-	map_attributes GoldenrodHappinessRater, GOLDENROD_HAPPINESS_RATER, $00, 0
-	map_attributes BillsFamilysHouse, BILLS_FAMILYS_HOUSE, $00, 0
-	map_attributes GoldenrodMagnetTrainStation, GOLDENROD_MAGNET_TRAIN_STATION, $00, 0
-	map_attributes GoldenrodFlowerShop, GOLDENROD_FLOWER_SHOP, $00, 0
-	map_attributes GoldenrodPPSpeechHouse, GOLDENROD_PP_SPEECH_HOUSE, $00, 0
-	map_attributes GoldenrodNameRater, GOLDENROD_NAME_RATER, $00, 0
-	map_attributes GoldenrodDeptStore1F, GOLDENROD_DEPT_STORE_1F, $00, 0
-	map_attributes GoldenrodDeptStore2F, GOLDENROD_DEPT_STORE_2F, $00, 0
-	map_attributes GoldenrodDeptStore3F, GOLDENROD_DEPT_STORE_3F, $00, 0
-	map_attributes GoldenrodDeptStore4F, GOLDENROD_DEPT_STORE_4F, $00, 0
-	map_attributes GoldenrodDeptStore5F, GOLDENROD_DEPT_STORE_5F, $00, 0
-	map_attributes GoldenrodDeptStore6F, GOLDENROD_DEPT_STORE_6F, $00, 0
-	map_attributes GoldenrodDeptStoreElevator, GOLDENROD_DEPT_STORE_ELEVATOR, $00, 0
-	map_attributes GoldenrodDeptStoreRoof, GOLDENROD_DEPT_STORE_ROOF, $24, 0
-	map_attributes GoldenrodGameCorner, GOLDENROD_GAME_CORNER, $00, 0
+	; map_attributes GoldenrodGym, GOLDENROD_GYM, $00, 0
+	; map_attributes GoldenrodBikeShop, GOLDENROD_BIKE_SHOP, $00, 0
+	; map_attributes GoldenrodHappinessRater, GOLDENROD_HAPPINESS_RATER, $00, 0
+	; map_attributes BillsFamilysHouse, BILLS_FAMILYS_HOUSE, $00, 0
+	; map_attributes GoldenrodMagnetTrainStation, GOLDENROD_MAGNET_TRAIN_STATION, $00, 0
+	; map_attributes GoldenrodFlowerShop, GOLDENROD_FLOWER_SHOP, $00, 0
+	; map_attributes GoldenrodPPSpeechHouse, GOLDENROD_PP_SPEECH_HOUSE, $00, 0
+	; map_attributes GoldenrodNameRater, GOLDENROD_NAME_RATER, $00, 0
+	; map_attributes GoldenrodDeptStore1F, GOLDENROD_DEPT_STORE_1F, $00, 0
+	; map_attributes GoldenrodDeptStore2F, GOLDENROD_DEPT_STORE_2F, $00, 0
+	; map_attributes GoldenrodDeptStore3F, GOLDENROD_DEPT_STORE_3F, $00, 0
+	; map_attributes GoldenrodDeptStore4F, GOLDENROD_DEPT_STORE_4F, $00, 0
+	; map_attributes GoldenrodDeptStore5F, GOLDENROD_DEPT_STORE_5F, $00, 0
+	; map_attributes GoldenrodDeptStore6F, GOLDENROD_DEPT_STORE_6F, $00, 0
+	; map_attributes GoldenrodDeptStoreElevator, GOLDENROD_DEPT_STORE_ELEVATOR, $00, 0
+	; map_attributes GoldenrodDeptStoreRoof, GOLDENROD_DEPT_STORE_ROOF, $24, 0
+	; map_attributes GoldenrodGameCorner, GOLDENROD_GAME_CORNER, $00, 0
 	map_attributes GoldenrodPokecenter1F, GOLDENROD_POKECENTER_1F, $00, 0
 	map_attributes PokecomCenterAdminOfficeMobile, POKECOM_CENTER_ADMIN_OFFICE_MOBILE, $00, 0
 	map_attributes IlexForestAzaleaGate, ILEX_FOREST_AZALEA_GATE, $00, 0

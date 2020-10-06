@@ -164,10 +164,10 @@ BillsHouse_Blocks:
 CharcoalKiln_Blocks:
 LakeOfRageHiddenPowerHouse_Blocks:
 LakeOfRageMagikarpHouse_Blocks:
-GoldenrodHappinessRater_Blocks:
-BillsFamilysHouse_Blocks:
-GoldenrodPPSpeechHouse_Blocks:
-GoldenrodNameRater_Blocks:
+; GoldenrodHappinessRater_Blocks:
+; BillsFamilysHouse_Blocks:
+; GoldenrodPPSpeechHouse_Blocks:
+; GoldenrodNameRater_Blocks:
 VermilionFishingSpeechHouse_Blocks:
 VermilionMagnetTrainSpeechHouse_Blocks:
 VermilionDiglettsCaveSpeechHouse_Blocks:
@@ -384,31 +384,31 @@ BetaCinnabarPokemonLabRoom2_Blocks:
 BetaCinnabarPokemonLabRoom3_Blocks:
 	INCBIN "maps/unused/BetaCinnabarPokemonLabRoom3.blk"
 
-GoldenrodDeptStore1F_Blocks:
+; GoldenrodDeptStore1F_Blocks:
 CeladonDeptStore1F_Blocks:
 	INCBIN "maps/DeptStore1F.blk"
 
-GoldenrodDeptStore2F_Blocks:
+; GoldenrodDeptStore2F_Blocks:
 CeladonDeptStore2F_Blocks:
 	INCBIN "maps/DeptStore2F.blk"
 
-GoldenrodDeptStore3F_Blocks:
+; GoldenrodDeptStore3F_Blocks:
 CeladonDeptStore3F_Blocks:
 	INCBIN "maps/DeptStore3F.blk"
 
-GoldenrodDeptStore4F_Blocks:
+; GoldenrodDeptStore4F_Blocks:
 CeladonDeptStore4F_Blocks:
 	INCBIN "maps/DeptStore4F.blk"
 
-GoldenrodDeptStore5F_Blocks:
+; GoldenrodDeptStore5F_Blocks:
 CeladonDeptStore5F_Blocks:
 	INCBIN "maps/DeptStore5F.blk"
 
-GoldenrodDeptStore6F_Blocks:
+; GoldenrodDeptStore6F_Blocks:
 CeladonDeptStore6F_Blocks:
 	INCBIN "maps/DeptStore6F.blk"
 
-GoldenrodDeptStoreElevator_Blocks:
+; GoldenrodDeptStoreElevator_Blocks:
 CeladonDeptStoreElevator_Blocks:
 	INCBIN "maps/DeptStoreElevator.blk"
 
@@ -472,8 +472,8 @@ BetaCapsuleHouse_Blocks:
 KurtsHouse_Blocks:
 	INCBIN "maps/KurtsHouse.blk"
 
-GoldenrodMagnetTrainStation_Blocks:
-	INCBIN "maps/GoldenrodMagnetTrainStation.blk"
+; GoldenrodMagnetTrainStation_Blocks:
+	; INCBIN "maps/GoldenrodMagnetTrainStation.blk"
 
 RuinsOfAlphOutside_Blocks:
 	INCBIN "maps/RuinsOfAlphOutside.blk"
@@ -734,8 +734,8 @@ AzaleaGym_Blocks:
 VioletGym_Blocks:
 	INCBIN "maps/VioletGym.blk"
 
-GoldenrodGym_Blocks:
-	INCBIN "maps/GoldenrodGym.blk"
+; GoldenrodGym_Blocks:
+	; INCBIN "maps/GoldenrodGym.blk"
 
 EcruteakGym_Blocks:
 	INCBIN "maps/EcruteakGym.blk"
@@ -800,8 +800,8 @@ DarkCaveBlackthornEntrance_Blocks:
 RuinsOfAlphResearchCenter_Blocks:
 	INCBIN "maps/RuinsOfAlphResearchCenter.blk"
 
-GoldenrodBikeShop_Blocks:
-	INCBIN "maps/GoldenrodBikeShop.blk"
+; GoldenrodBikeShop_Blocks:
+	; INCBIN "maps/GoldenrodBikeShop.blk"
 
 DanceTheatre_Blocks:
 	INCBIN "maps/DanceTheatre.blk"
@@ -809,8 +809,8 @@ DanceTheatre_Blocks:
 EcruteakTinTowerEntrance_Blocks:
 	INCBIN "maps/EcruteakTinTowerEntrance.blk"
 
-GoldenrodGameCorner_Blocks:
-	INCBIN "maps/GoldenrodGameCorner.blk"
+; GoldenrodGameCorner_Blocks:
+	; INCBIN "maps/GoldenrodGameCorner.blk"
 
 Route35NationalParkGate_Blocks:
 	INCBIN "maps/Route35NationalParkGate.blk"
@@ -977,8 +977,8 @@ CopycatsHouse1F_Blocks:
 CopycatsHouse2F_Blocks:
 	INCBIN "maps/CopycatsHouse2F.blk"
 
-GoldenrodFlowerShop_Blocks:
-	INCBIN "maps/GoldenrodFlowerShop.blk"
+; GoldenrodFlowerShop_Blocks:
+	; INCBIN "maps/GoldenrodFlowerShop.blk"
 
 MountMoonSquare_Blocks:
 	INCBIN "maps/MountMoonSquare.blk"
@@ -1043,5 +1043,5 @@ BattleTowerOutside_Blocks:
 BetaBlank_Blocks:
 	INCBIN "maps/unused/BetaBlank.blk"
 
-GoldenrodDeptStoreRoof_Blocks:
-	INCBIN "maps/GoldenrodDeptStoreRoof.blk"
+; GoldenrodDeptStoreRoof_Blocks:
+	; INCBIN "maps/GoldenrodDeptStoreRoof.blk"

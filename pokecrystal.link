@@ -74,7 +74,7 @@ ROMX $13
 ROMX $14
 	"bank14"
 ROMX $15
-	"Map Scripts 1"
+	"Formerly: Map Scripts 1, Now: All Mine!"
 ROMX $16
 	"Map Scripts 2"
 ROMX $17
