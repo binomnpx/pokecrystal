@@ -148,7 +148,7 @@ ItemEffects:
 	dw BasementKeyEffect   ; BASEMENT_KEY
 	dw NoEffect            ; PASS
 	dw NoEffect            ; CHOICE_BAND
-	dw NoEffect            ; ITEM_88
+	dw NoEffect            ; LIFE_ORB
 	dw NoEffect            ; ITEM_89
 	dw NoEffect            ; CHARCOAL
 	dw RestoreHPEffect     ; BERRY_JUICE

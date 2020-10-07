@@ -79,6 +79,11 @@ HurtByCurseText:
 	line "hurt by the CURSE!"
 	prompt
 
+HurtByLifeOrbText::
+	text "<USER>'s"
+	line "hurt by LIFE ORB!"
+	prompt
+
 SandstormHitsText:
 	text "The SANDSTORM hits"
 	line "<USER>!"

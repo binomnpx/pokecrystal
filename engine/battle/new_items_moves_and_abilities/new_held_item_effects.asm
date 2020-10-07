@@ -131,4 +131,152 @@ ChoiceBand::
 	ret
 
 
+HandleBetweenMovesEffects::
+; handles life orb damage and berries
+; used in engine/battle/core.asm
+
+	push bc
+	push hl
+
+	farcall GetUserItem
+	ld a, b
+	cp HELD_LIFE_ORB
+	jr z, .LifeOrb
+	jr .pop_ret
+	
+.LifeOrb
+; the 30% damage increase is taken care of in engine/battle/effect_commands
+
+; dont dmg if attack missed
+	ld a, [wAttackMissed]
+	and a
+	jr nz, .pop_ret
+
+;dont dmg if used status/fixed damage moves
+	ld a, BATTLE_VARS_MOVE_POWER
+	call GetBattleVar
+	
+; power = 0
+	and a
+	jr z, .pop_ret
+	
+; power = 1
+	cp 1
+	jr z, .pop_ret
+	
+
+; if opponent has fainted then
+; delay dmg until HandleBetweenTurnsEffects is called
+
+; who moved last?
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemyturn
+
+; player
+	farcall HasEnemyFainted
+	jr nz, .do_damage
+	
+; set flag for HandleBetweenTurnsEffects
+	ld hl, wBattleItemFlags
+	set BATTLEITEMFLAG_LIFEORB, [hl]
+	jr .pop_ret
+
+; enemy
+.enemyturn
+	farcall HasPlayerFainted
+	jr nz, .do_damage
+	
+; set flag for HandleBetweenTurnsEffects
+	ld hl, wBattleItemFlags
+	set BATTLEITEMFLAG_LIFEORB, [hl]
+	jr .pop_ret
+
+; damage 1/10 HP
+.do_damage
+
+	call GetTenthMaxHP
+	farcall SubtractHPFromUser
+	ld hl, HurtByLifeOrbText
+	call StdBattleTextbox
+	
+.pop_ret
+	pop hl
+	pop bc
+	ret
+
+
+
+GetTenthMaxHP::
+; divide max hp by 10 and place in bc
+	xor a
+	ld hl, hDividend
+	ld [hli], a
+	ld [hl], a
+	
+	farcall GetMaxHP
+	ld a, b
+	ld [hDividend + 2], a
+	ld a, c
+	ld [hDividend + 3], a
+	
+	ld a, 10
+	ld [hDividend + 4], a
+	ld b, 4
+	call Divide
+	
+	ld a, [hQuotient + 3]
+	ld c, a
+	xor a
+	ld b, a
+	
+	ret
+
+
+
+;;;
+
+
+; ; divide max hp by 10 and place in bc
+	; xor a
+	; ld hl, hDividend
+	; ld [hli], a
+	; ld [hld], a
+	
+	; farcall GetMaxHP
+	; ld a, b
+	; ld [hli], a
+	; ld a, c
+	; ld [hli], a
+	
+	; ld a, 10
+	; ld [hl], a
+	; ld b, 2
+	; call Divide
+	
+	; ld a, [hQuotient + 1]
+	; ld c, a
+	; xor a
+	; ld b, a
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -135,7 +135,7 @@ ItemDescriptions:
 	dw BasementKeyDesc
 	dw PassDesc
 	dw ChoiceBandDesc
-	dw TeruSama10Desc
+	dw LifeOrbDesc
 	dw TeruSama11Desc
 	dw CharcoalDesc
 	dw BerryJuiceDesc
@@ -786,10 +786,11 @@ PassDesc:
 
 ChoiceBandDesc:
 	db   "Ups ATTACK. Cannot"
-	next "vary moves.(HOLD)@"
+	next "vary moves. (HOLD)@"
 
-TeruSama10Desc:
-	db   "?@"
+LifeOrbDesc:
+	db   "Ups ATTACK but"
+	next "hurts user. (HOLD)@"
 
 TeruSama11Desc:
 	db   "?@"

@@ -3,6 +3,8 @@
 DoBattle:
 	xor a
 	ld [wBattleFlags], a
+	ld [wBattleItemFlags], a
+	ld [wBattleWeather2], a
 	ld [wBattleParticipantsNotFainted], a
 	ld [wBattleParticipantsIncludingFainted], a
 	ld [wBattlePlayerAction], a
@@ -298,6 +300,7 @@ HandleBetweenTurnEffects:
 	ld [wEnemyGoesFirst], a
 	
 .go
+	call HandleLifeOrb
 	; call CheckFaint_EnemyThenPlayer
 	; ret c
 	call HandleWeather
@@ -974,6 +977,7 @@ Battle_EnemyFirst:
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
+	farcall HandleBetweenMovesEffects
 	call HasPlayerFainted
 	jp z, HandlePlayerMonFaint ; also checks if player lost battle
 	call HasEnemyFainted
@@ -996,6 +1000,7 @@ Finish_Battle_EnemyFirst:
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
+	farcall HandleBetweenMovesEffects
 	call HasEnemyFainted ; checks if hp is zero or not
 	jp z, HandleEnemyMonFaint 
 	call HasPlayerFainted ; checks if hp is zero or not
@@ -1024,6 +1029,7 @@ Battle_PlayerFirst:
 	ret nz
 	call CheckMobileBattleError
 	ret c
+	farcall HandleBetweenMovesEffects
 	call HasEnemyFainted
 	jp z, HandleEnemyMonFaint
 	call HasPlayerFainted
@@ -1052,6 +1058,7 @@ Finish_Battle_PlayerFirst:
 	ld a, [wForcedSwitch]
 	and a
 	ret nz
+	farcall HandleBetweenMovesEffects
 	call HasPlayerFainted
 	jp z, HandlePlayerMonFaint
 	call HasEnemyFainted
@@ -1102,14 +1109,14 @@ HasUserFainted:
 	and a
 	jr z, HasPlayerFainted
 	
-HasEnemyFainted:
+HasEnemyFainted::
 	ld hl, wEnemySubStatus2
 	bit SUBSTATUS_FAINTED, [hl]
 	ret nz
 	ld hl, wEnemyMonHP
 	jr CheckIfHPIsZero
 
-HasPlayerFainted:
+HasPlayerFainted::
 	ld hl, wPlayerSubStatus2
 	bit SUBSTATUS_FAINTED, [hl]
 	ret nz
@@ -1806,6 +1813,20 @@ HandleScreens:
 	ld hl, BattleText_MonsReflectFaded
 	jp StdBattleTextbox
 
+HandleLifeOrb:
+	ld hl, wBattleItemFlags
+	bit BATTLEITEMFLAG_LIFEORB, [hl]
+	ret z
+	
+	res BATTLEITEMFLAG_LIFEORB, [hl]
+	
+	farcall GetTenthMaxHP
+	farcall SubtractHPFromUser
+	ld hl, HurtByLifeOrbText
+	call StdBattleTextbox
+	ret
+	
+
 HandleWeather:
 	ld a, [wBattleWeather2]
 	cp WEATHER_NONE
@@ -2289,7 +2310,7 @@ SubtractHPFromTarget:
 	call SubtractHP
 	jp UpdateHPBar
 
-SubtractHPFromUser:
+SubtractHPFromUser::
 ; Subtract HP from mon
 	call SubtractHP
 	jp UpdateHPBarBattleHuds
@@ -2354,7 +2375,7 @@ GetEighthMaxHP:
 ; .end
 	ret
 
-GetQuarterMaxHP:
+GetQuarterMaxHP::
 ; output: bc
 	call GetMaxHP
 
@@ -2391,7 +2412,7 @@ GetHalfMaxHP:
 ; .end
 	ret
 
-GetMaxHP:
+GetMaxHP::
 ; output: bc, wBuffer1-2
 
 	ld hl, wBattleMonMaxHP

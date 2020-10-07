@@ -2768,7 +2768,7 @@ DunsparceEvosAttacks:
 	db 18, SPITE
 	db 26, ICE_BEAM
 	db 30, NIGHT_SHADE
-	db 31, DRAGON_RUSH
+	db 31, THIEF
 	db 38, WILL_O_WISP
 	db 0 ; no more level-up moves
 

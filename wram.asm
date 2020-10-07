@@ -941,11 +941,17 @@ wRandMon5:: db
 wRandMon6:: db
 wCoins:: dw
 ;;;;;;;;;;;;;;;;
-wBattleWeather2::
-db ;used for hail
+wBattleWeather2:: db
+;used for hail
+
 wBattleFlags:: db
+; flags constants found in constants/battle_constants.asm
 ; 0 end of turn
-	ds 11
+
+wBattleItemFlags:: db
+; flags constants found in constants/battle_constants.asm
+; 0 Life Orb (set if you want damage after opponent has fainted)
+	ds 10
 
 wUnusedMapBufferEnd::
 

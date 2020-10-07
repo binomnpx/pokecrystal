@@ -295,7 +295,7 @@ BattleTower1FTeacherScript:
 	writetext Text_BattleTowerTeacher
 	waitbutton
 	givecoins 60
-	givepoke DUNSPARCE, 50
+	givepoke DUNSPARCE, 50, LIFE_ORB
 	setflag ENGINE_POKEGEAR
 	closetext
 	end

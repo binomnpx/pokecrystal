@@ -135,3 +135,4 @@ MAIL_STRUCT_LENGTH EQU $2f ; mailmsg struct
 	
 	const_def 80
 	const HELD_CHOICE_BAND
+	const HELD_LIFE_ORB

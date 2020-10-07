@@ -2638,13 +2638,14 @@ PhysOrSpec: ; nc mean special, c means physical
 	ld hl, wPlayerMoveStructPower + 1
 	ld a, [hl]
 	cp SPECIAL
-	pop hl
-	ret
+	jr .done
 	
 .enemyatk
 	ld hl, wEnemyMoveStructPower + 1
 	ld a, [hl]
 	cp SPECIAL
+	
+.done
 	pop hl
 	ret
 
@@ -2728,10 +2729,6 @@ PlayerAttackDamage:
 .thickclub
 ; Note: Returns player attack at hl in hl.
 	call ThickClubBoost
-	call PhysOrSpec
-	jr nc, .noCB
-	farcall ChoiceBand
-.noCB
 
 .done
 	call TruncateHL_BC
@@ -2740,10 +2737,6 @@ PlayerAttackDamage:
 	ld e, a
 	call DittoMetalPowder
 	farcall UnevolvedEviolite
-	call PhysOrSpec
-	jr c, .noAV
-	farcall AssaultVest
-.noAV
 
 	ld a, 1
 	and a
@@ -2979,10 +2972,6 @@ EnemyAttackDamage:
 
 .thickclub
 	call ThickClubBoost
-	call PhysOrSpec
-	jr nc, .noCB
-	farcall ChoiceBand
-.noCB
 
 .done
 	call TruncateHL_BC
@@ -2991,10 +2980,6 @@ EnemyAttackDamage:
 	ld e, a
 	call DittoMetalPowder
 	farcall UnevolvedEviolite
-	call PhysOrSpec
-	jr c, .noAV
-	farcall AssaultVest
-.noAV
 
 	ld a, 1
 	and a
@@ -3139,6 +3124,9 @@ BattleCommand_DamageCalc:
 	and a
 	jr z, .DoneItem
 
+	cp HELD_LIFE_ORB
+	jr z, .skiptypeboostitems
+
 	ld hl, TypeBoostItems
 
 .NextItem:
@@ -3158,6 +3146,8 @@ BattleCommand_DamageCalc:
 	and TYPE_MASK
 	cp b
 	jr nz, .DoneItem
+
+.skiptypeboostitems
 
 ; * 100 + item effect amount
 	ld a, c

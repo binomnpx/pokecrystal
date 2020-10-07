@@ -134,7 +134,7 @@ ItemNames::
 	db "BASEMENT KEY@"
 	db "PASS@"
 	db "CHOICE BAND@"
-	db "TERU-SAMA@"
+	db "LIFE ORB@"
 	db "TERU-SAMA@"
 	db "CHARCOAL@"
 	db "BERRY JUICE@"
