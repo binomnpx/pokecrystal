@@ -2702,6 +2702,18 @@ PlayerAttackDamage:
 .lightball
 ; Note: Returns player special attack at hl in hl.
 	call LightBallBoost
+	
+; need to preserve whats in hl
+	push de
+
+	ld d, h
+	ld e, l
+	farcall ChoiceSpecs
+	ld h, d
+	ld l, e
+
+	pop de
+	
 	jr .done
 
 .thickclub
@@ -2958,6 +2970,18 @@ EnemyAttackDamage:
 
 .lightball
 	call LightBallBoost
+	
+; need to preserve whats in hl
+	push de
+
+	ld d, h
+	ld e, l
+	farcall ChoiceSpecs
+	ld h, d
+	ld l, e
+
+	pop de
+	
 	jr .done
 
 .thickclub

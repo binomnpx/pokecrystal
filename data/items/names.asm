@@ -135,7 +135,7 @@ ItemNames::
 	db "PASS@"
 	db "CHOICE BAND@"
 	db "LIFE ORB@"
-	db "TERU-SAMA@"
+	db "CHOICE SPECS@"
 	db "CHARCOAL@"
 	db "BERRY JUICE@"
 	db "SCOPE LENS@"

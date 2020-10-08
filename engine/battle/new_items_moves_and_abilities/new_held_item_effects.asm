@@ -135,6 +135,35 @@ ChoiceBand::
 	rr e
 	ret
 
+ChoiceSpecs::
+; check if the user's item is Choice Specs
+
+	push bc
+	farcall GetUserItem
+	ld a, b
+	cp HELD_CHOICE_SPECS
+	pop bc
+	ret nz
+
+	call PhysOrSpec
+	ret c
+
+; boost special attack stat in de by 50%
+	ld a, e
+	srl a
+	add e
+	ld e, a
+	ret nc
+
+	srl d
+	ld a, d
+	and a
+	jr nz, .done
+	inc d
+.done
+	scf
+	rr e
+	ret
 
 PhysOrSpec: ; nc mean special, c means physical
 ; check who's attacking

@@ -149,7 +149,7 @@ ItemEffects:
 	dw NoEffect            ; PASS
 	dw NoEffect            ; CHOICE_BAND
 	dw NoEffect            ; LIFE_ORB
-	dw NoEffect            ; ITEM_89
+	dw NoEffect            ; CHOICE_SPECS
 	dw NoEffect            ; CHARCOAL
 	dw RestoreHPEffect     ; BERRY_JUICE
 	dw NoEffect            ; SCOPE_LENS

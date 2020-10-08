@@ -136,7 +136,7 @@ ItemDescriptions:
 	dw PassDesc
 	dw ChoiceBandDesc
 	dw LifeOrbDesc
-	dw TeruSama11Desc
+	dw ChoiceSpecsDesc
 	dw CharcoalDesc
 	dw BerryJuiceDesc
 	dw ScopeLensDesc
@@ -792,9 +792,10 @@ LifeOrbDesc:
 	db   "Ups ATTACK but"
 	next "hurts user. (HOLD)@"
 
-TeruSama11Desc:
-	db   "?@"
-
+ChoiceSpecsDesc:
+	db   "Ups SP.ATK. Cannot"
+	next "vary moves. (HOLD)@"
+	
 CharcoalDesc:
 	db   "Powers up fire-"
 	next "type moves. (HOLD)@"

@@ -142,7 +142,7 @@
 	const PASS         ; 86
 	const CHOICE_BAND  ; 87
 	const LIFE_ORB     ; 88
-	const ITEM_89      ; 89
+	const CHOICE_SPECS ; 89
 	const CHARCOAL     ; 8a
 	const BERRY_JUICE  ; 8b
 	const SCOPE_LENS   ; 8c
