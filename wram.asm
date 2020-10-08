@@ -951,6 +951,7 @@ wBattleFlags:: db
 wBattleItemFlags:: db
 ; flags constants found in constants/battle_constants.asm
 ; 0 Life Orb (set if you want damage after opponent has fainted)
+
 	ds 10
 
 wUnusedMapBufferEnd::

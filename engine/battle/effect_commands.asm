@@ -2627,28 +2627,6 @@ DittoMetalPowder:
 	rr c
 	ret
 
-PhysOrSpec: ; nc mean special, c means physical
-; check who's attacking
-	push hl
-	ldh a, [hBattleTurn]
-	and a
-	jr nz, .enemyatk
-
-; check if physical attack was used
-	ld hl, wPlayerMoveStructPower + 1
-	ld a, [hl]
-	cp SPECIAL
-	jr .done
-	
-.enemyatk
-	ld hl, wEnemyMoveStructPower + 1
-	ld a, [hl]
-	cp SPECIAL
-	
-.done
-	pop hl
-	ret
-
 
 BattleCommand_DamageStats:
 ; damagestats
@@ -2730,6 +2708,17 @@ PlayerAttackDamage:
 ; Note: Returns player attack at hl in hl.
 	call ThickClubBoost
 
+; need to preserve whats in hl
+	push de
+
+	ld d, h
+	ld e, l
+	farcall ChoiceBand
+	ld h, d
+	ld l, e
+
+	pop de
+
 .done
 	call TruncateHL_BC
 
@@ -2737,6 +2726,7 @@ PlayerAttackDamage:
 	ld e, a
 	call DittoMetalPowder
 	farcall UnevolvedEviolite
+	farcall AssaultVest
 
 	ld a, 1
 	and a
@@ -2972,6 +2962,17 @@ EnemyAttackDamage:
 
 .thickclub
 	call ThickClubBoost
+	
+; need to preserve whats in hl
+	push de
+
+	ld d, h
+	ld e, l
+	farcall ChoiceBand
+	ld h, d
+	ld l, e
+
+	pop de
 
 .done
 	call TruncateHL_BC
@@ -2980,6 +2981,7 @@ EnemyAttackDamage:
 	ld e, a
 	call DittoMetalPowder
 	farcall UnevolvedEviolite
+	farcall AssaultVest
 
 	ld a, 1
 	and a

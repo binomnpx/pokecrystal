@@ -703,6 +703,19 @@ CheckPlayerLockedIn:
 ParsePlayerAction:
 	call CheckPlayerLockedIn
 	jp c, .locked_in
+	
+;handle choice items
+	farcall GetUserItem
+	ld a, b
+	cp HELD_CHOICE_BAND
+	jr nz, .nochoiceitem
+	ld a, [wLastPlayerMove]
+	and a
+	jr z, .nochoiceitem ; move not "choiced" yet
+	ld [wCurPlayerMove], a
+	jr .encored
+	
+.nochoiceitem
 	ld hl, wPlayerSubStatus5
 	bit SUBSTATUS_ENCORED, [hl]
 	jr z, .not_encored
@@ -6468,6 +6481,19 @@ ParseEnemyAction:
 	jp .finish
 
 .not_linked
+
+;handle choiceband
+	farcall GetUserItem
+	ld a, b
+	cp HELD_CHOICE_BAND
+	jr nz, .nochoiceitem
+	ld a, [wLastEnemyMove]
+	and a
+	jr z, .nochoiceitem ; move not "choiced" yet
+	ld [wCurEnemyMove], a
+	jp .finish
+	
+.nochoiceitem
 	ld hl, wEnemySubStatus5
 	bit SUBSTATUS_ENCORED, [hl]
 	jr z, .skip_encore

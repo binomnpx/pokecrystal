@@ -68,6 +68,9 @@ AssaultVest::
 	pop bc
 	ret nz
 
+	call PhysOrSpec
+	ret c
+
 ; boost special defense stat in bc by 50%
 	ld a, c
 	srl a
@@ -104,30 +107,55 @@ LightClay::
 
 ChoiceBand::
 ; check if the user's item is Choice Band
-	push hl
+
 	push bc
 	farcall GetUserItem
 	ld a, b
 	cp HELD_CHOICE_BAND
 	pop bc
-	pop hl
 	ret nz
 
-; boost attack stat in hl by 50%
-	ld a, l
-	srl a
-	add l
-	ld l, a
+	call PhysOrSpec
 	ret nc
 
-	srl h
-	ld a, h
+; boost attack stat in de by 50%
+	ld a, e
+	srl a
+	add e
+	ld e, a
+	ret nc
+
+	srl d
+	ld a, d
 	and a
 	jr nz, .done
-	inc h
+	inc d
 .done
 	scf
-	rr l
+	rr e
+	ret
+
+
+PhysOrSpec: ; nc mean special, c means physical
+; check who's attacking
+	push hl
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemyatk
+
+; check if physical attack was used
+	ld hl, wPlayerMoveStructPower + 1
+	ld a, [hl]
+	cp SPECIAL
+	jr .done
+	
+.enemyatk
+	ld hl, wEnemyMoveStructPower + 1
+	ld a, [hl]
+	cp SPECIAL
+	
+.done
+	pop hl
 	ret
 
 
@@ -231,38 +259,6 @@ GetTenthMaxHP::
 	ld b, a
 	
 	ret
-
-
-
-;;;
-
-
-; ; divide max hp by 10 and place in bc
-	; xor a
-	; ld hl, hDividend
-	; ld [hli], a
-	; ld [hld], a
-	
-	; farcall GetMaxHP
-	; ld a, b
-	; ld [hli], a
-	; ld a, c
-	; ld [hli], a
-	
-	; ld a, 10
-	; ld [hl], a
-	; ld b, 2
-	; call Divide
-	
-	; ld a, [hQuotient + 1]
-	; ld c, a
-	; xor a
-	; ld b, a
-
-
-
-
-
 
 
 
