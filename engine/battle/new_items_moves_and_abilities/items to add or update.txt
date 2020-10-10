@@ -1,8 +1,11 @@
 
-choice band
+assault vest ---
+life orb ---
+choice band ---
 choice scarf
-choice specs
+choice specs ---
 flame orb
+toxic orb
 silver berry
 gold berry
 crystal berry

@@ -188,9 +188,85 @@ PhysOrSpec: ; nc mean special, c means physical
 	ret
 
 
+ChoiceScarf::
+; modifies speed stat for player/enemy
+; called right before speed checks
+
+	ld a, [wBattleMonSpeed]
+	ld d, a
+	ld a, [wBattleMonSpeed + 1]
+	ld e, a
+
+	ld a, [wBattleMonItem]
+	cp CHOICE_SCARF
+	jr nz, .finish
+
+	; boost speed stat by 50%
+	
+	ld a, e
+	srl a
+	add e
+	ld e, a
+	jr nc, .finish
+
+	srl d
+	ld a, d
+	and a
+	jr nz, .done
+	inc d
+.done
+	scf
+	rr e
+
+.finish
+	ld a, d
+	ld [wBattleMonChoiceScarfSpeed], a
+	ld a, e
+	ld [wBattleMonChoiceScarfSpeed + 1], a
+
+; enemy
+
+	ld a, [wEnemyMonSpeed]
+	ld d, a
+	ld a, [wEnemyMonSpeed + 1]
+	ld e, a
+
+	ld a, [wEnemyMonItem]
+	cp CHOICE_SCARF
+	jr nz, .finish2
+	
+	; boost speed stat by 50%
+	
+	ld a, e
+	srl a
+	add e
+	ld e, a
+	jr nc, .finish2
+
+	srl d
+	ld a, d
+	and a
+	jr nz, .done2
+	inc d
+.done2
+	scf
+	rr e
+
+.finish2
+	ld a, d
+	ld [wEnemyMonChoiceScarfSpeed], a
+	ld a, e
+	ld [wEnemyMonChoiceScarfSpeed + 1], a
+	
+	ret
+
+
+
 HandleBetweenMovesEffects::
 ; handles life orb damage and berries
 ; used in engine/battle/core.asm
+
+	call ChoiceScarf ; modifies speed stats accordingly
 
 	push bc
 	push hl
@@ -235,7 +311,7 @@ HandleBetweenMovesEffects::
 	jr nz, .do_damage
 	
 ; set flag for HandleBetweenTurnsEffects
-	ld hl, wBattleItemFlags
+	ld hl, wPlayerItemFlags
 	set BATTLEITEMFLAG_LIFEORB, [hl]
 	jr .pop_ret
 
@@ -245,7 +321,7 @@ HandleBetweenMovesEffects::
 	jr nz, .do_damage
 	
 ; set flag for HandleBetweenTurnsEffects
-	ld hl, wBattleItemFlags
+	ld hl, wEnemyItemFlags
 	set BATTLEITEMFLAG_LIFEORB, [hl]
 	jr .pop_ret
 

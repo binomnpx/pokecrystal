@@ -948,11 +948,16 @@ wBattleFlags:: db
 ; flags constants found in constants/battle_constants.asm
 ; 0 end of turn
 
-wBattleItemFlags:: db
+wPlayerItemFlags:: db
+wEnemyItemFlags:: db
 ; flags constants found in constants/battle_constants.asm
 ; 0 Life Orb (set if you want damage after opponent has fainted)
 
-	ds 10
+wBattleMonChoiceScarfSpeed:: dw
+wEnemyMonChoiceScarfSpeed:: dw
+; speed stat *1.5
+
+	ds 5
 
 wUnusedMapBufferEnd::
 

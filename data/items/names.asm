@@ -139,7 +139,7 @@ ItemNames::
 	db "CHARCOAL@"
 	db "BERRY JUICE@"
 	db "SCOPE LENS@"
-	db "TERU-SAMA@"
+	db "CHOICE SCARF@"
 	db "TERU-SAMA@"
 	db "METAL COAT@"
 	db "DRAGON FANG@"

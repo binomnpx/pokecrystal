@@ -3,7 +3,8 @@
 DoBattle:
 	xor a
 	ld [wBattleFlags], a
-	ld [wBattleItemFlags], a
+	ld [wPlayerItemFlags], a
+	ld [wEnemyItemFlags], a
 	ld [wBattleWeather2], a
 	ld [wBattleParticipantsNotFainted], a
 	ld [wBattleParticipantsIncludingFainted], a
@@ -268,8 +269,14 @@ HandleBetweenTurnEffects:
 	; ldh a, [hSerialConnectionStatus]
 	; cp USING_EXTERNAL_CLOCK
 
-	ld de, wBattleMonSpeed
-	ld hl, wEnemyMonSpeed
+	
+
+	; ld de, wBattleMonSpeed
+	; ld hl, wEnemyMonSpeed
+	
+	ld de, wBattleMonChoiceScarfSpeed
+	ld hl, wEnemyMonChoiceScarfSpeed
+	
 	ld c, 2
 	call CompareBytes
 	jr z, .speed_tie
@@ -628,8 +635,12 @@ DetermineMoveOrder:
 	; jr .speed_check
 
 .speed_check
-	ld de, wBattleMonSpeed
-	ld hl, wEnemyMonSpeed
+	; ld de, wBattleMonSpeed
+	; ld hl, wEnemyMonSpeed
+	
+	ld de, wBattleMonChoiceScarfSpeed
+	ld hl, wEnemyMonChoiceScarfSpeed
+	
 	ld c, 2
 	call CompareBytes
 	jr z, .speed_tie
@@ -710,7 +721,8 @@ ParsePlayerAction:
 	jr z, .haschoiceitem
 	cp CHOICE_SPECS
 	jr z, .haschoiceitem
-	jr .nochoiceitem
+	cp CHOICE_SCARF
+	jr nz, .nochoiceitem
 
 .haschoiceitem
 	ld a, [wLastPlayerMove]
@@ -1831,10 +1843,17 @@ HandleScreens:
 	jp StdBattleTextbox
 
 HandleLifeOrb:
-	ld hl, wBattleItemFlags
+; for when opponent faints by life orb user.
+; faints enemy then applies the life orb damage.
+; gets called by HandleBetweenTurnEffects
+	ld hl, wPlayerItemFlags
+	bit BATTLEITEMFLAG_LIFEORB, [hl]
+	jr nz, .do_it
+	ld hl, wEnemyItemFlags
 	bit BATTLEITEMFLAG_LIFEORB, [hl]
 	ret z
-	
+
+.do_it
 	res BATTLEITEMFLAG_LIFEORB, [hl]
 	
 	farcall GetTenthMaxHP
@@ -6492,7 +6511,8 @@ ParseEnemyAction:
 	jr z, .haschoiceitem
 	cp CHOICE_SPECS
 	jr z, .haschoiceitem
-	jr .nochoiceitem
+	cp CHOICE_SCARF
+	jr nz, .nochoiceitem
 
 .haschoiceitem
 	ld a, [wLastEnemyMove]

@@ -295,8 +295,8 @@ BattleTower1FTeacherScript:
 	writetext Text_BattleTowerTeacher
 	waitbutton
 	givecoins 60
-	givepoke DUNSPARCE, 50, CHOICE_SPECS
-	givepoke SCYTHER, 50, ASSAULT_VEST
+	givepoke FERALIGATR, 100, CHOICE_SCARF
+	givepoke TYPHLOSION, 100
 	setflag ENGINE_POKEGEAR
 	closetext
 	end
