@@ -274,6 +274,8 @@ HandleBetweenTurnEffects:
 	; ld de, wBattleMonSpeed
 	; ld hl, wEnemyMonSpeed
 	
+	farcall ChoiceScarf
+	
 	ld de, wBattleMonChoiceScarfSpeed
 	ld hl, wEnemyMonChoiceScarfSpeed
 	
@@ -637,6 +639,8 @@ DetermineMoveOrder:
 .speed_check
 	; ld de, wBattleMonSpeed
 	; ld hl, wEnemyMonSpeed
+	
+	farcall ChoiceScarf
 	
 	ld de, wBattleMonChoiceScarfSpeed
 	ld hl, wEnemyMonChoiceScarfSpeed
