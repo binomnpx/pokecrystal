@@ -1,7 +1,7 @@
 ; Held item effects that are consumed on use
 
 ConsumableEffects:
-	db HELD_BERRY
+	db HELD_GOLD_BERRY
 	db HELD_2
 	db HELD_5
 	db HELD_HEAL_POISON

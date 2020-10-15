@@ -179,6 +179,11 @@ StdBattleTextbox::
 
 	pop af
 	rst Bankswitch
+	
+	farcall SwitchTurnCore
+	farcall HandleHPHealingItem
+	farcall SwitchTurnCore
+	
 	ret
 
 GetBattleAnimPointer::

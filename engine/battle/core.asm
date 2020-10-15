@@ -1428,7 +1428,7 @@ HandleWrap:
 .print_text
 	jp StdBattleTextbox
 
-SwitchTurnCore:
+SwitchTurnCore::
 	ldh a, [hBattleTurn]
 	xor 1
 	ldh [hBattleTurn], a
@@ -4938,11 +4938,16 @@ HandleHealingItems:
 	call UseHeldStatusHealingItem
 	jp UseConfusionHealingItem
 
-HandleHPHealingItem:
+HandleHPHealingItem::
 	callfar GetOpponentItem
 	ld a, b
-	cp HELD_BERRY
+	cp HELD_GOLD_BERRY
 	ret nz
+	
+	call SwitchTurnCore
+	call GetQuarterMaxHP
+	call SwitchTurnCore
+	
 	ld de, wEnemyMonHP + 1
 	ld hl, wEnemyMonMaxHP
 	ldh a, [hBattleTurn]
@@ -4952,7 +4957,7 @@ HandleHPHealingItem:
 	ld hl, wBattleMonMaxHP
 
 .go
-; If, and only if, Pokemon's HP is less than half max, use the item.
+; If Pokemon's HP is less than or equal to half max, use the item.
 ; Store current HP in Buffer 3/4
 	push bc
 	ld a, [de]
@@ -4977,6 +4982,7 @@ HandleHPHealingItem:
 	inc hl
 	cp [hl]
 	dec hl
+	jr z, .less
 	ret nc
 
 .less
@@ -4986,7 +4992,7 @@ HandleHPHealingItem:
 	ld [wBuffer2], a
 	ld a, [hl]
 	ld [wBuffer1], a
-	ld a, [de]
+	ld a, [de]	
 	add c
 	ld [wBuffer5], a
 	ld c, a
