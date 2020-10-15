@@ -266,7 +266,7 @@ HandleBetweenMovesEffects::
 ; handles life orb damage and berries
 ; used in engine/battle/core.asm
 
-	call ChoiceScarf ; modifies speed stats accordingly
+	call ChoiceScarf ; modifies speed stats accordingly (in case of trick/switcheroo/thief etc.)
 
 	push bc
 	push hl

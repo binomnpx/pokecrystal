@@ -295,8 +295,7 @@ BattleTower1FTeacherScript:
 	writetext Text_BattleTowerTeacher
 	waitbutton
 	givecoins 60
-	givepoke FERALIGATR, 100, CHOICE_SCARF
-	givepoke TYPHLOSION, 100
+	givepoke GENGAR, 40, GOLD_BERRY
 	setflag ENGINE_POKEGEAR
 	closetext
 	end

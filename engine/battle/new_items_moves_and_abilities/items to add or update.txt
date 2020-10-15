@@ -2,17 +2,17 @@
 assault vest ---
 life orb ---
 choice band ---
-choice scarf
+choice scarf ---
 choice specs ---
 flame orb
 toxic orb
 silver berry
 gold berry
-crystal berry
+crystalberry
 focus sash
-miracle berry
+miracleberry
 mint berry
-mystery berry
+mysteryberry
 
 air balloon
 custap berry
