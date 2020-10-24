@@ -154,10 +154,10 @@ ItemEffects:
 	dw RestoreHPEffect     ; BERRY_JUICE
 	dw NoEffect            ; SCOPE_LENS
 	dw NoEffect            ; CHOICE_SCARF
-	dw NoEffect            ; ITEM_8E
+	dw NoEffect            ; FLAME_ORB
 	dw NoEffect            ; METAL_COAT
 	dw NoEffect            ; DRAGON_FANG
-	dw NoEffect            ; ITEM_91
+	dw NoEffect            ; TOXIC_ORB
 	dw NoEffect            ; LEFTOVERS
 	dw NoEffect            ; ITEM_93
 	dw NoEffect            ; ITEM_94

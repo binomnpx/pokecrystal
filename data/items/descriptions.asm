@@ -141,10 +141,10 @@ ItemDescriptions:
 	dw BerryJuiceDesc
 	dw ScopeLensDesc
 	dw ChoiceScarfDesc
-	dw TeruSama13Desc
+	dw FlameOrbDesc
 	dw MetalCoatDesc
 	dw DragonFangDesc
-	dw TeruSama14Desc
+	dw ToxicOrbDesc
 	dw LeftoversDesc
 	dw TeruSama15Desc
 	dw TeruSama16Desc
@@ -811,8 +811,10 @@ ScopeLensDesc:
 ChoiceScarfDesc:
 	db   "Ups SPEED. Cannot"
 	next "vary moves. (HOLD)@"
-TeruSama13Desc:
-	db   "?@"
+
+FlameOrbDesc:
+	db   "Burns user at end"
+	next "of turn. (HOLD)@"
 
 MetalCoatDesc:
 	db   "Powers up steel-"
@@ -822,9 +824,10 @@ DragonFangDesc:
 	db   "Powers up dragon-"
 	next "type moves. (HOLD)@"
 
-TeruSama14Desc:
-	db   "?@"
-
+ToxicOrbDesc:
+	db   "Badly poisons the"
+	next "user. (HOLD)@"
+	
 LeftoversDesc:
 	db   "Restores HP during"
 	next "battle. (HOLD)@"

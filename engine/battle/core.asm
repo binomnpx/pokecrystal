@@ -355,6 +355,8 @@ HandleBetweenTurnEffects:
 	
 	; Handle Screens
 	; Handle Safeguard
+	
+	farcall HandleFlameOrbToxicOrb
 	; Handle Speed Boost/Moody/Bad Dreams + Flame Orb/Toxic Orb/Sticky Barb + Harvest
 
 ; .NoMoreFaintingConditions:
@@ -7713,7 +7715,7 @@ _BattleRandom::
 	pop hl
 	ret
 
-Call_PlayBattleAnim_OnlyIfVisible:
+Call_PlayBattleAnim_OnlyIfVisible::
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVar
 	and 1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND

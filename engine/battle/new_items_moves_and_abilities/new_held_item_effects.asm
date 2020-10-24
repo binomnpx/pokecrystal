@@ -370,6 +370,88 @@ GetTenthMaxHP::
 
 
 
+HandleFlameOrbToxicOrb::
+	ld a, [wEnemyGoesFirst]
+	and a
+	jr nz, .EnemyFirst
+	call SetPlayerTurn
+	call .do_it
+	call SetEnemyTurn
+	jp .do_it
+
+.EnemyFirst:
+	call SetEnemyTurn
+	call .do_it
+	call SetPlayerTurn
+
+.do_it
+; check for status
+	ld a, BATTLE_VARS_STATUS
+	call GetBattleVar
+	and a
+	ret nz
+
+	callfar GetUserItem
+	ld a, b
+	cp HELD_FLAME_ORB
+	jr z, .flame_orb
+	cp HELD_TOXIC_ORB
+	ret nz
+	
+; toxic_orb
+; check for poison-type
+	ld de, wEnemyMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .ok1
+	ld de, wBattleMonType1
+.ok1
+	ld a, [de]
+	inc de
+	cp POISON
+	ret z
+	ld a, [de]
+	cp POISON
+	ret z
+
+	ld de, ANIM_PSN
+	farcall Call_PlayBattleAnim_OnlyIfVisible
+	
+	ld a, BATTLE_VARS_STATUS
+	call GetBattleVarAddr
+	set PSN, [hl]
+	set TOX, [hl]
+	call UpdateUserInParty
+	call UpdateBattleHuds
+	ld hl, ToxicOrbText
+	jp StdBattleTextbox
+
+.flame_orb	
+; check for fire-type
+	ld de, wEnemyMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .ok2
+	ld de, wBattleMonType1
+.ok2
+	ld a, [de]
+	inc de
+	cp FIRE
+	ret z
+	ld a, [de]
+	cp FIRE
+	ret z
+
+	ld de, ANIM_BRN
+	farcall Call_PlayBattleAnim_OnlyIfVisible
+	
+	ld a, BATTLE_VARS_STATUS
+	call GetBattleVarAddr
+	set BRN, [hl]
+	call UpdateUserInParty
+	call UpdateBattleHuds
+	ld hl, FlameOrbText
+	jp StdBattleTextbox
 
 
 

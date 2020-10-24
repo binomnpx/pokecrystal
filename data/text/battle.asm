@@ -963,6 +963,18 @@ AlreadyBurnedText:
 	text "<TARGET>'s"
 	line "already burned!"
 	prompt
+	
+FlameOrbText::
+	text "<USER>'s"
+	line "burned by it's"
+	cont "FLAME ORB!"
+	prompt
+	
+ToxicOrbText::
+	text "<USER>'s"
+	line "badly poisoned by"
+	cont "it's TOXIC ORB!"
+	prompt
 
 ProtectedByText:
 	text "<TARGET>'s"
