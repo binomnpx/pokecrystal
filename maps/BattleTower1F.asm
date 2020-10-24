@@ -295,7 +295,8 @@ BattleTower1FTeacherScript:
 	writetext Text_BattleTowerTeacher
 	waitbutton
 	givecoins 60
-	givepoke TAUROS, 50, GOLD_BERRY
+	givepoke DUNSPARCE, 50, GOLD_BERRY
+	givepoke MANTINE, 50, SILVER_BERRY
 	setflag ENGINE_POKEGEAR
 	closetext
 	end

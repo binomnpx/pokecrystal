@@ -268,6 +268,11 @@ HandleBetweenMovesEffects::
 
 	push bc
 	push hl
+	
+	farcall HandleHPHealingItem
+	farcall SwitchTurnCore
+	farcall HandleHPHealingItem
+	farcall SwitchTurnCore
 
 	farcall GetUserItem
 	ld a, b

@@ -4920,21 +4920,21 @@ HandleHealingItems:
 	cp USING_EXTERNAL_CLOCK
 	jr z, .player_1
 	call SetPlayerTurn
-	call HandleHPHealingItem
+	; call HandleHPHealingItem
 	call UseHeldStatusHealingItem
 	call UseConfusionHealingItem
 	call SetEnemyTurn
-	call HandleHPHealingItem
+	; call HandleHPHealingItem
 	call UseHeldStatusHealingItem
 	jp UseConfusionHealingItem
 
 .player_1
 	call SetEnemyTurn
-	call HandleHPHealingItem
+	; call HandleHPHealingItem
 	call UseHeldStatusHealingItem
 	call UseConfusionHealingItem
 	call SetPlayerTurn
-	call HandleHPHealingItem
+	; call HandleHPHealingItem
 	call UseHeldStatusHealingItem
 	jp UseConfusionHealingItem
 
@@ -4942,12 +4942,22 @@ HandleHPHealingItem::
 	callfar GetOpponentItem
 	ld a, b
 	cp HELD_GOLD_BERRY
+	jr z, .has_gold_berry
+	cp HELD_SILVER_BERRY
 	ret nz
 	
+; has silver berry
+	call SwitchTurnCore
+	call GetHalfMaxHP
+	call SwitchTurnCore
+	jr .get_cur_hp_and_max_hp
+	
+.has_gold_berry
 	call SwitchTurnCore
 	call GetQuarterMaxHP
 	call SwitchTurnCore
 	
+.get_cur_hp_and_max_hp
 	ld de, wEnemyMonHP + 1
 	ld hl, wEnemyMonMaxHP
 	ldh a, [hBattleTurn]
@@ -4960,6 +4970,7 @@ HandleHPHealingItem::
 ; If Pokemon's HP is less than or equal to half max, use the item.
 ; Store current HP in Buffer 3/4
 	push bc
+
 	ld a, [de]
 	ld [wBuffer3], a
 	add a
@@ -4970,7 +4981,26 @@ HandleHPHealingItem::
 	ld [wBuffer4], a
 	adc a
 	ld b, a
-	; ld a, b
+	
+	push bc
+	push hl
+	callfar GetOpponentItem
+	pop hl
+	ld a, b
+	cp HELD_SILVER_BERRY
+	pop bc
+	jr nz, .no_silver
+
+	ld a, c
+	add a
+	ld c, a
+	
+	ld a, b
+	adc a
+	ld b, a
+
+.no_silver
+	ld a, b
 	cp [hl]
 	ld a, c
 	pop bc

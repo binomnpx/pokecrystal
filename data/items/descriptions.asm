@@ -175,7 +175,7 @@ ItemDescriptions:
 	dw BerryDesc
 	dw GoldBerryDesc
 	dw SquirtBottleDesc
-	dw TeruSama23Desc
+	dw SilverBerryDesc
 	dw ParkBallDesc
 	dw RainbowWingDesc
 	dw TeruSama24Desc
@@ -930,15 +930,16 @@ BerryDesc:
 	next "item. (10HP, HOLD)@"
 
 GoldBerryDesc:
-	db   "A self-restore"
-	next "item. (30HP, HOLD)@"
+	db   "Heals 1/4 HP at or"
+	next "below 1/2. (HOLD)@"
 
 SquirtBottleDesc:
 	db   "A bottle used for"
 	next "watering plants.@"
 
-TeruSama23Desc:
-	db   "?@"
+SilverBerryDesc:
+	db   "Heals 1/2 HP at or"
+	next "below 1/4. (HOLD)@"
 
 ParkBallDesc:
 	db   "The Bug-Catching"
