@@ -4941,6 +4941,25 @@ HandleHealingItems:
 	jp UseConfusionHealingItem
 
 HandleHPHealingItem::
+
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .check_enemy_hp
+	
+;check_player_hp
+	ld hl, wBattleMonHP
+	ld a, [hli]
+	or [hl]
+	jr nz, .mon_not_fainted
+	ret
+
+.check_enemy_hp
+	ld hl, wEnemyMonHP
+	ld a, [hli]
+	or [hl]
+	ret z
+
+.mon_not_fainted
 	callfar GetOpponentItem
 	ld a, b
 	cp HELD_GOLD_BERRY
