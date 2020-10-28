@@ -361,7 +361,7 @@ HandleBetweenTurnEffects:
 
 ; .NoMoreFaintingConditions:
 	; call HandleLeftovers
-	call HandleMysteryberry
+	; call HandleMysteryberry
 	; call HandleDefrost
 	call HandleScreens
 	call HandleSafeguard
@@ -1489,7 +1489,7 @@ HandleLeftovers:
 	ld hl, BattleText_TargetRecoveredWithItem
 	jp StdBattleTextbox
 
-HandleMysteryberry:
+HandleMysteryberry::
 	ldh a, [hSerialConnectionStatus]
 	cp USING_EXTERNAL_CLOCK
 	jr z, .DoEnemyFirst
@@ -4923,21 +4923,21 @@ HandleHealingItems:
 	jr z, .player_1
 	call SetPlayerTurn
 	; call HandleHPHealingItem
-	call UseHeldStatusHealingItem
+	; call UseHeldStatusHealingItem
 	call UseConfusionHealingItem
 	call SetEnemyTurn
 	; call HandleHPHealingItem
-	call UseHeldStatusHealingItem
+	; call UseHeldStatusHealingItem
 	jp UseConfusionHealingItem
 
 .player_1
 	call SetEnemyTurn
 	; call HandleHPHealingItem
-	call UseHeldStatusHealingItem
+	; call UseHeldStatusHealingItem
 	call UseConfusionHealingItem
 	call SetPlayerTurn
 	; call HandleHPHealingItem
-	call UseHeldStatusHealingItem
+	; call UseHeldStatusHealingItem
 	jp UseConfusionHealingItem
 
 HandleHPHealingItem::
@@ -5106,7 +5106,7 @@ ItemRecoveryAnim:
 	pop hl
 	ret
 
-UseHeldStatusHealingItem:
+UseHeldStatusHealingItem::
 	callfar GetOpponentItem
 	ld hl, HeldStatusHealingEffects
 .loop

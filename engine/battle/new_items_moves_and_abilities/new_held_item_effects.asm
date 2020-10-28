@@ -270,8 +270,15 @@ HandleBetweenMovesEffects::
 	push hl
 	
 	farcall HandleHPHealingItem
+	farcall UseHeldStatusHealingItem
+	farcall HandleMysteryberry
+	
 	farcall SwitchTurnCore
+	
 	farcall HandleHPHealingItem
+	farcall UseHeldStatusHealingItem
+	farcall HandleMysteryberry
+	
 	farcall SwitchTurnCore
 
 	farcall GetUserItem
