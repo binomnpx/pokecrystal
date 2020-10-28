@@ -54,7 +54,6 @@ GetHPPal::
 .equal
 	inc hl
 	cp [hl]
-	dec hl
 	pop hl
 	pop de
 	jr z, .yellow

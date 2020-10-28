@@ -5297,11 +5297,14 @@ UpdatePlayerHUD::
 	ret
 
 DrawPlayerHUD:
-	ld hl, wBattleMonHP
-	ld a, [hli]
-	or [hl]
-	ret z
-
+	; ld hl, wBattleMonHP
+	; ld a, [hli]
+	; or [hl]
+	; ret z
+	ld a, [wPlayerSubStatus2]
+	bit SUBSTATUS_FAINTED, a
+	ret nz
+	
 	xor a
 	ldh [hBGMapMode], a
 
@@ -5442,10 +5445,13 @@ UpdateEnemyHUD::
 	ret
 
 DrawEnemyHUD:
-	ld hl, wEnemyMonHP
-	ld a, [hli]
-	or [hl]
-	ret z
+	; ld hl, wEnemyMonHP
+	; ld a, [hli]
+	; or [hl]
+	; ret z
+	ld a, [wEnemySubStatus2]
+	bit SUBSTATUS_FAINTED, a
+	ret nz
 
 	xor a
 	ldh [hBGMapMode], a
