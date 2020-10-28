@@ -295,7 +295,7 @@ BattleTower1FTeacherScript:
 	writetext Text_BattleTowerTeacher
 	waitbutton
 	givecoins 60
-	givepoke FLAREON, 50, TOXIC_ORB
+	givepoke ARTICUNO, 30, FOCUS_SASH
 	setflag ENGINE_POKEGEAR
 	closetext
 	end

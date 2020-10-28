@@ -2197,7 +2197,7 @@ BattleCommand_ApplyDamage:
 	ld a, BATTLE_VARS_SUBSTATUS1_OPP
 	call GetBattleVar
 	bit SUBSTATUS_ENDURE, a
-	jr z, .focus_band
+	jr z, .focus_items
 
 	call BattleCommand_FalseSwipe
 	ld b, 0
@@ -2205,13 +2205,23 @@ BattleCommand_ApplyDamage:
 	ld b, 1
 	jr .damage
 
-.focus_band
+.focus_items
 	call GetOpponentItem
 	ld a, b
 	cp HELD_FOCUS_BAND
 	ld b, 0
+	jr z, .focus_band
+	cp HELD_FOCUS_SASH
 	jr nz, .damage
+	
+;focus_sash
+	farcall FocusSash
+	ld b, 0
+	jr c, .damage ; sash doesn't activate
+	ld b, 3
+	jr .damage ; sash activates
 
+.focus_band
 	call BattleRandom
 	cp c
 	jr nc, .damage
@@ -2240,6 +2250,9 @@ BattleCommand_ApplyDamage:
 	ret z
 
 	dec a
+	cp 2
+	jr z, .focus_sash_text_and_consume
+	and a
 	jr nz, .focus_band_text
 	ld hl, EnduredText
 	jp StdBattleTextbox
@@ -2249,6 +2262,15 @@ BattleCommand_ApplyDamage:
 	ld a, [hl]
 	ld [wNamedObjectIndexBuffer], a
 	call GetItemName
+	ld hl, HungOnText
+	jp StdBattleTextbox
+
+.focus_sash_text_and_consume
+	call GetOpponentItem
+	ld a, [hl]
+	ld [wNamedObjectIndexBuffer], a
+	call GetItemName
+	callfar ConsumeFocusSash
 	ld hl, HungOnText
 	jp StdBattleTextbox
 

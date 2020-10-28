@@ -146,7 +146,7 @@ ItemDescriptions:
 	dw DragonFangDesc
 	dw ToxicOrbDesc
 	dw LeftoversDesc
-	dw TeruSama15Desc
+	dw FocusSashDesc
 	dw TeruSama16Desc
 	dw TeruSama17Desc
 	dw MysteryBerryDesc
@@ -832,8 +832,9 @@ LeftoversDesc:
 	db   "Restores HP during"
 	next "battle. (HOLD)@"
 
-TeruSama15Desc:
-	db   "?@"
+FocusSashDesc:
+	db   "No fainting from"
+	next "max HP. (HOLD)@"
 
 TeruSama16Desc:
 	db   "?@"

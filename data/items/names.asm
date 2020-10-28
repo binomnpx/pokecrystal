@@ -145,7 +145,7 @@ ItemNames::
 	db "DRAGON FANG@"
 	db "TOXIC ORB@"
 	db "LEFTOVERS@"
-	db "TERU-SAMA@"
+	db "FOCUS SASH@"
 	db "TERU-SAMA@"
 	db "TERU-SAMA@"
 	db "MYSTERYBERRY@"

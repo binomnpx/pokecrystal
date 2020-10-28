@@ -456,11 +456,82 @@ HandleFlameOrbToxicOrb::
 
 
 
+FocusSash::
+; get correct HP
+	ld hl, wEnemyMonMaxHP
+	ld de, wEnemyMonHP
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_hp
+	ld hl, wBattleMonMaxHP
+	ld de, wBattleMonHP
+.got_hp
+; checks if opponent is at full HP
+	ld c, 2
+	push hl
+	push de
+	call CompareBytes
+	pop de
+	pop hl
+	ret c ; HP < Max HP
 
+; checks if wCurDamage >= opponent's max HP
+	ld de, wCurDamage
+	ld c, 2
+	push hl
+	push de
+	call CompareBytes
+	pop de
+	pop hl
+	ret c ; if there's no carry then wCurDamage >= opponent's max HP
 
+	ld hl, wEnemyMonHP
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_hp_again
+	ld hl, wBattleMonHP
+.got_hp_again
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hl]
+	dec a
+	ld [de], a
 
+	inc a
+	jr nz, .okay
+	dec de
+	ld a, [de]
+	dec a
+	ld [de], a
 
+.okay
+	and a
+	ret
 
+ConsumeFocusSash::
+	push hl
+	push de
+	push bc
+	ldh a, [hBattleTurn]
+	and a
+	ld hl, wOTPartyMon1Item
+	ld de, wEnemyMonItem
+	ld a, [wCurOTMon]
+	jr z, .theirturn
+	ld hl, wPartyMon1Item
+	ld de, wBattleMonItem
+	ld a, [wCurBattleMon]
+
+.theirturn
+	xor a
+	ld [de], a
+	call GetPartyLocation
+	ld [hl], NO_ITEM
+	pop bc
+	pop de
+	pop hl
+	ret
 
 
 
