@@ -4,12 +4,12 @@ MoveDescriptions::
 	dw KarateChopDescription
 	dw DoubleslapDescription
 	dw CometPunchDescription
-	dw MegaPunchDescription
+	dw XScissorDescription
 	dw PayDayDescription
 	dw FirePunchDescription
 	dw IcePunchDescription
 	dw ThunderpunchDescription
-	dw ScratchDescription
+	dw DazzlingGleamDescription
 	dw VicegripDescription
 	dw GuillotineDescription
 	dw RazorWindDescription
@@ -277,9 +277,9 @@ CometPunchDescription:
 	db   "Repeatedly punches"
 	next "2-5 times.@"
 
-MegaPunchDescription:
-	db   "A powerful punch"
-	next "thrown very hard.@"
+XScissorDescription:
+	db   "Slashes at foe"
+	next "like scissors.@"
 
 PayDayDescription:
 	db   "Throws coins. Gets"
@@ -297,9 +297,9 @@ ThunderpunchDescription:
 	db   "An electric punch."
 	next "It may paralyze.@"
 
-ScratchDescription:
-	db   "Scratches with"
-	next "sharp claws.@"
+DazzlingGleamDescription:
+	db   "Emits a powerful"
+	next "flash to attack.@"
 
 VicegripDescription:
 	db   "Grips with power-"

@@ -72,7 +72,7 @@ VenusaurEvosAttacks:
 CharmanderEvosAttacks:
 	db EVOLVE_LEVEL, 16, CHARMELEON
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, GROWL
 	db 7, EMBER
 	db 13, SMOKESCREEN
@@ -87,7 +87,7 @@ CharmanderEvosAttacks:
 CharmeleonEvosAttacks:
 	db EVOLVE_LEVEL, 36, CHARIZARD
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, GROWL
 	db 1, EMBER
 	db 7, EMBER
@@ -102,7 +102,7 @@ CharmeleonEvosAttacks:
 
 CharizardEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, GROWL
 	db 1, EMBER
 	db 1, SMOKESCREEN
@@ -111,7 +111,7 @@ CharizardEvosAttacks:
 	db 20, RAGE
 	db 27, SCARY_FACE
 	db 34, FLAMETHROWER
-	db 36, WING_ATTACK
+	db 36, DAZZLINGLEAM
 	db 44, DRAGON_CLAW
 	db 54, DRAGON_RAGE
 	db 64, FIRE_SPIN
@@ -371,7 +371,7 @@ RaichuEvosAttacks:
 SandshrewEvosAttacks:
 	db EVOLVE_LEVEL, 22, SANDSLASH
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 6, DEFENSE_CURL
 	db 11, SAND_ATTACK
 	db 17, POISON_STING
@@ -383,7 +383,7 @@ SandshrewEvosAttacks:
 
 SandslashEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, DEFENSE_CURL
 	db 1, SAND_ATTACK
 	db 6, DEFENSE_CURL
@@ -400,7 +400,7 @@ NidoranFEvosAttacks:
 	db 0 ; no more evolutions
 	db 1, GROWL
 	db 1, TACKLE
-	db 8, SCRATCH
+	db 8, DAZZLINGLEAM
 	db 12, DOUBLE_KICK
 	db 17, POISON_STING
 	db 23, TAIL_WHIP
@@ -413,7 +413,7 @@ NidorinaEvosAttacks:
 	db 0 ; no more evolutions
 	db 1, GROWL
 	db 1, TACKLE
-	db 8, SCRATCH
+	db 8, DAZZLINGLEAM
 	db 12, DOUBLE_KICK
 	db 19, POISON_STING
 	db 27, TAIL_WHIP
@@ -424,7 +424,7 @@ NidorinaEvosAttacks:
 NidoqueenEvosAttacks:
 	db 0 ; no more evolutions
 	db 1, TACKLE
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, DOUBLE_KICK
 	db 1, TAIL_WHIP
 	db 23, BODY_SLAM
@@ -598,7 +598,7 @@ VileplumeEvosAttacks:
 ParasEvosAttacks:
 	db EVOLVE_LEVEL, 24, PARASECT
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 7, STUN_SPORE
 	db 13, POISONPOWDER
 	db 19, LEECH_LIFE
@@ -610,7 +610,7 @@ ParasEvosAttacks:
 
 ParasectEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, STUN_SPORE
 	db 1, POISONPOWDER
 	db 7, STUN_SPORE
@@ -658,7 +658,7 @@ VenomothEvosAttacks:
 DiglettEvosAttacks:
 	db EVOLVE_LEVEL, 26, DUGTRIO
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 5, GROWL
 	db 9, MAGNITUDE
 	db 17, DIG
@@ -671,7 +671,7 @@ DiglettEvosAttacks:
 DugtrioEvosAttacks:
 	db 0 ; no more evolutions
 	db 1, TRI_ATTACK
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, GROWL
 	db 1, MAGNITUDE
 	db 5, GROWL
@@ -686,7 +686,7 @@ DugtrioEvosAttacks:
 MeowthEvosAttacks:
 	db EVOLVE_LEVEL, 28, PERSIAN
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, GROWL
 	db 11, BITE
 	db 20, PAY_DAY
@@ -698,7 +698,7 @@ MeowthEvosAttacks:
 
 PersianEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, GROWL
 	db 1, BITE
 	db 11, BITE
@@ -712,7 +712,7 @@ PersianEvosAttacks:
 PsyduckEvosAttacks:
 	db EVOLVE_LEVEL, 33, GOLDUCK
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 5, TAIL_WHIP
 	db 10, DISABLE
 	db 16, CONFUSION
@@ -724,7 +724,7 @@ PsyduckEvosAttacks:
 
 GolduckEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, TAIL_WHIP
 	db 1, DISABLE
 	db 1, CONFUSION
@@ -740,7 +740,7 @@ GolduckEvosAttacks:
 MankeyEvosAttacks:
 	db EVOLVE_LEVEL, 28, PRIMEAPE
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, LEER
 	db 9, LOW_KICK
 	db 15, KARATE_CHOP
@@ -754,7 +754,7 @@ MankeyEvosAttacks:
 
 PrimeapeEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, LEER
 	db 1, LOW_KICK
 	db 1, RAGE
@@ -1458,7 +1458,7 @@ HitmonchanEvosAttacks:
 	db 26, ICE_PUNCH
 	db 26, FIRE_PUNCH
 	db 32, MACH_PUNCH
-	db 38, MEGA_PUNCH
+	db 38, X_SCISSOR
 	db 44, DETECT
 	db 50, COUNTER
 	db 0 ; no more level-up moves
@@ -1567,7 +1567,7 @@ KangaskhanEvosAttacks:
 	db 7, LEER
 	db 13, BITE
 	db 19, TAIL_WHIP
-	db 25, MEGA_PUNCH
+	db 25, X_SCISSOR
 	db 31, RAGE
 	db 37, ENDURE
 	db 43, DIZZY_PUNCH
@@ -1897,7 +1897,7 @@ OmastarEvosAttacks:
 KabutoEvosAttacks:
 	db EVOLVE_LEVEL, 40, KABUTOPS
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, HARDEN
 	db 10, ABSORB
 	db 19, LEER
@@ -1909,7 +1909,7 @@ KabutoEvosAttacks:
 
 KabutopsEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, HARDEN
 	db 1, ABSORB
 	db 10, ABSORB
@@ -2051,7 +2051,7 @@ MewEvosAttacks:
 	db 0 ; no more evolutions
 	db 1, DRAGON_CLAW
 	db 10, TRANSFORM
-	db 20, MEGA_PUNCH
+	db 20, X_SCISSOR
 	db 30, METRONOME
 	db 40, PSYCHIC_M
 	db 50, ANCIENTPOWER
@@ -2149,7 +2149,7 @@ TyphlosionEvosAttacks:
 TotodileEvosAttacks:
 	db EVOLVE_LEVEL, 18, CROCONAW
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, LEER
 	db 7, RAGE
 	db 13, WATER_GUN
@@ -2163,7 +2163,7 @@ TotodileEvosAttacks:
 CroconawEvosAttacks:
 	db EVOLVE_LEVEL, 30, FERALIGATR
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, LEER
 	db 1, RAGE
 	db 7, RAGE
@@ -2177,7 +2177,7 @@ CroconawEvosAttacks:
 
 FeraligatrEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, LEER
 	db 1, RAGE
 	db 1, WATER_GUN
@@ -2204,7 +2204,7 @@ SentretEvosAttacks:
 
 FurretEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, DEFENSE_CURL
 	db 1, QUICK_ATTACK
 	db 5, DEFENSE_CURL
@@ -2572,7 +2572,7 @@ JumpluffEvosAttacks:
 
 AipomEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, TAIL_WHIP
 	db 6, SAND_ATTACK
 	db 12, BATON_PASS
@@ -2877,7 +2877,7 @@ HeracrossEvosAttacks:
 
 SneaselEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, LEER
 	db 9, QUICK_ATTACK
 	db 17, SCREECH
@@ -2892,7 +2892,7 @@ SneaselEvosAttacks:
 TeddiursaEvosAttacks:
 	db EVOLVE_LEVEL, 30, URSARING
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, LEER
 	db 8, LICK
 	db 15, FURY_SWIPES
@@ -2905,7 +2905,7 @@ TeddiursaEvosAttacks:
 
 UrsaringEvosAttacks:
 	db 0 ; no more evolutions
-	db 1, SCRATCH
+	db 1, DAZZLINGLEAM
 	db 1, LEER
 	db 1, LICK
 	db 1, FURY_SWIPES

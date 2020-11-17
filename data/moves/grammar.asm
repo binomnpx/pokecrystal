@@ -57,7 +57,7 @@ MoveGrammar:
 
 ; 3: originally "[mon]の¯[move]　こうげき!" ("[mon]'s¯[move] attack!")
 	db DRAGON_CLAW
-	db SCRATCH
+	db DAZZLINGLEAM
 	db VICEGRIP
 	db WING_ATTACK
 	db FLY

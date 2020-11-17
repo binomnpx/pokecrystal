@@ -5,12 +5,12 @@ BattleAnimations::
 	dw BattleAnim_KarateChop
 	dw BattleAnim_Doubleslap
 	dw BattleAnim_CometPunch
-	dw BattleAnim_MegaPunch
+	dw BattleAnim_XScissor
 	dw BattleAnim_PayDay
 	dw BattleAnim_FirePunch
 	dw BattleAnim_IcePunch
 	dw BattleAnim_Thunderpunch
-	dw BattleAnim_Scratch
+	dw BattleAnim_DazzlingGleam
 	dw BattleAnim_Vicegrip
 	dw BattleAnim_Guillotine
 	dw BattleAnim_RazorWind
@@ -724,19 +724,12 @@ BattleAnim_CometPunch:
 	anim_wait 8
 	anim_ret
 
-BattleAnim_MegaPunch:
-	anim_1gfx ANIM_GFX_HIT
-	anim_bgeffect ANIM_BG_1F, $40, $2, $0
-	anim_wait 48
-	anim_bgeffect ANIM_BG_FLASH_INVERTED, $0, $8, $3
-.loop
-	anim_sound 0, 1, SFX_MEGA_PUNCH
-	anim_obj ANIM_OBJ_06, 136, 56, $0
-	anim_obj ANIM_OBJ_00, 136, 56, $0
-	anim_wait 6
-	anim_obj ANIM_OBJ_06, 136, 56, $0
-	anim_wait 6
-	anim_loop 3, .loop
+BattleAnim_XScissor:
+	anim_1gfx ANIM_GFX_CUT
+	anim_sound 0, 1, SFX_CUT
+	anim_obj ANIM_OBJ_3A, 152, 40, $0
+	anim_obj ANIM_OBJ_3A, 148, 36, $0
+	anim_wait 32
 	anim_ret
 
 BattleAnim_Stomp:
@@ -1516,13 +1509,14 @@ BattleAnim_Vicegrip:
 	anim_wait 32
 	anim_ret
 
-BattleAnim_Scratch:
-	anim_1gfx ANIM_GFX_CUT
-	anim_sound 0, 1, SFX_SCRATCH
-	anim_obj ANIM_OBJ_37, 144, 48, $0
-	anim_obj ANIM_OBJ_37, 140, 44, $0
-	anim_obj ANIM_OBJ_37, 136, 40, $0
-	anim_wait 32
+BattleAnim_DazzlingGleam:
+	anim_1gfx ANIM_GFX_SHINE
+	anim_if_param_equal 0, .zero
+	anim_call BattleAnimSub_Glimmer
+	anim_ret
+
+.zero
+	anim_call BattleAnimSub_Glimmer2
 	anim_ret
 
 BattleAnim_FurySwipes:
@@ -1763,7 +1757,7 @@ BattleAnim_FocusEnergy:
 	anim_ret
 
 BattleAnim_Bide:
-	anim_if_param_equal $0, BattleAnim_MegaPunch
+	anim_if_param_equal $0, BattleAnim_XScissor
 	anim_1gfx ANIM_GFX_HIT
 	anim_call BattleAnim_TargetObj_1Row
 	anim_sound 0, 0, SFX_ESCAPE_ROPE
