@@ -1,5 +1,5 @@
 MoveNames::
-	db "POUND@"
+	db "DRAGON CLAW@"
 	db "KARATE CHOP@"
 	db "DOUBLESLAP@"
 	db "COMET PUNCH@"

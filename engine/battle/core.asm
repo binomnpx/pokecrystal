@@ -756,7 +756,7 @@ ParsePlayerAction:
 	jr nz, .locked_in
 	xor a
 	ld [wMoveSelectionMenuType], a
-	inc a ; POUND
+	inc a ; DRAGON_CLAW
 	ld [wFXAnimID], a
 	call MoveSelectionScreen
 	push af

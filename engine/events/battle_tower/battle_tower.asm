@@ -481,7 +481,7 @@ endr
 
 .not_move
 	dec hl
-	ld a, POUND
+	ld a, DRAGON_CLAW
 	ld [hli], a
 	xor a
 	ld [hli], a

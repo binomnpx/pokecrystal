@@ -171,7 +171,7 @@ Unreferenced_CorrectPartyErrors:
 	cp NUM_ATTACKS + 1
 	jr c, .moves_loop
 .invalid_move
-	ld [hl], POUND
+	ld [hl], DRAGON_CLAW
 
 .moves_loop
 	ld a, [hl]
