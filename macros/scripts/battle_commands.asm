@@ -183,6 +183,7 @@ ENDM
 	command starthail				; b0
 	command failifoppfainted		; b1
 	command burn
+	command growth
 
 	enum_start $fe
 	command endturn                 ; fe

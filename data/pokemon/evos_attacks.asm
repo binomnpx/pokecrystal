@@ -109,10 +109,10 @@ CharizardEvosAttacks:
 	db 7, EMBER
 	db 13, SMOKESCREEN
 	db 20, RAGE
-	db 27, SCARY_FACE
-	db 34, FLAMETHROWER
+	db 27, SUNNY_DAY
+	db 34, GROWTH
 	db 36, DAZZLINGLEAM
-	db 44, DRAGON_CLAW
+	db 44, SUBSTITUTE
 	db 54, DRAGON_RAGE
 	db 64, FIRE_SPIN
 	db 0 ; no more level-up moves

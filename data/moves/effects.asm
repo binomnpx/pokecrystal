@@ -2092,3 +2092,11 @@ DoBurn:
 	checksafeguard
 	burn
 	endmove
+
+Growth:
+	checkobedience
+	usedmovetext
+	doturn
+	growth
+	endmove
+

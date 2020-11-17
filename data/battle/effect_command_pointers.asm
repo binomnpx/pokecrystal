@@ -182,3 +182,4 @@ BattleCommandPointers:
 	dw BattleCommand_StartHail
 	dw BattleCommand_FailIfOppFainted
 	dw BattleCommand_Burn
+	dw BattleCommand_Growth

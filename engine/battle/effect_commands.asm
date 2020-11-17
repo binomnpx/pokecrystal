@@ -6679,6 +6679,8 @@ INCLUDE "engine/battle/move_effects/hail.asm"
 
 INCLUDE "engine/battle/move_effects/rollout.asm"
 
+INCLUDE "engine/battle/move_effects/growth.asm"
+
 BattleCommand5d:
 ; unused
 	ret
